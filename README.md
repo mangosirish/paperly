@@ -7,14 +7,12 @@
 El proyecto está organizado en tres componentes principales:
 
 1. **db**: Esta carpeta contiene los scripts y configuraciones necesarios para la base de datos del proyecto, la cual está implementada en PostgreSQL.
-2. **api**: En esta carpeta se encuentra el código de la API, que está desarrollada en Go. La API se encarga de manejar las solicitudes del frontend y gestionar la lógica de negocio.
-3. **web**: Esta carpeta contiene el frontend del proyecto, desarrollado en React. Aquí se gestiona la interacción del usuario con el sistema.
+2. **app**: En esta carpeta se encuentra el código de la API, que está desarrollada en Go. La API se encarga de manejar las solicitudes del frontend y gestionar la lógica de negocio.
 
 ## Tecnologías Utilizadas
 
 - **Base de Datos**: PostgreSQL
-- **Backend**: Go (con Go's net/http para el servidor web y manejo de rutas)
-- **Frontend**: React (utilizando React Router para la navegación y Axios para las solicitudes a la API)
+- **Aplicación**: Go (con Go's net/http para el servidor web y manejo de rutas)
 
 ## Instalación y Configuración
 
@@ -23,7 +21,6 @@ El proyecto está organizado en tres componentes principales:
 Asegúrate de tener instalados los siguientes componentes en tu sistema:
 
 - **Go** (1.18 o superior)
-- **Node.js** (14.x o superior)
 - **PostgreSQL** (13.x o superior)
 
 ## Licencia
