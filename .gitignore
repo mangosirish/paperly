@@ -1,4 +1,4 @@
-api/.env
+app/.env
 
 db/.env
 db/data/
