@@ -1,18 +1,149 @@
+/* Tema oscuro */
+:root {
+    --md-sys-color-primary: rgb(170 199 255);
+    --md-sys-color-surface-tint: rgb(170 199 255);
+    --md-sys-color-on-primary: rgb(10 48 95);
+    --md-sys-color-primary-container: rgb(40 71 119);
+    --md-sys-color-on-primary-container: rgb(214 227 255);
+    --md-sys-color-secondary: rgb(190 198 220);
+    --md-sys-color-on-secondary: rgb(40 49 65);
+    --md-sys-color-secondary-container: rgb(62 71 89);
+    --md-sys-color-on-secondary-container: rgb(218 226 249);
+    --md-sys-color-tertiary: rgb(221 188 224);
+    --md-sys-color-on-tertiary: rgb(63 40 68);
+    --md-sys-color-tertiary-container: rgb(87 62 92);
+    --md-sys-color-on-tertiary-container: rgb(250 216 253);
+    --md-sys-color-error: rgb(255 180 171);
+    --md-sys-color-on-error: rgb(105 0 5);
+    --md-sys-color-error-container: rgb(147 0 10);
+    --md-sys-color-on-error-container: rgb(255 218 214);
+    --md-sys-color-background: rgb(17 19 24);
+    --md-sys-color-on-background: rgb(226 226 233);
+    --md-sys-color-surface: rgb(17 19 24);
+    --md-sys-color-on-surface: rgb(226 226 233);
+    --md-sys-color-surface-variant: rgb(68 71 78);
+    --md-sys-color-on-surface-variant: rgb(196 198 208);
+    --md-sys-color-outline: rgb(142 144 153);
+    --md-sys-color-outline-variant: rgb(68 71 78);
+    --md-sys-color-shadow: rgb(0 0 0);
+    --md-sys-color-scrim: rgb(0 0 0);
+    --md-sys-color-inverse-surface: rgb(226 226 233);
+    --md-sys-color-inverse-on-surface: rgb(46 48 54);
+    --md-sys-color-inverse-primary: rgb(65 95 145);
+    --md-sys-color-primary-fixed: rgb(214 227 255);
+    --md-sys-color-on-primary-fixed: rgb(0 27 62);
+    --md-sys-color-primary-fixed-dim: rgb(170 199 255);
+    --md-sys-color-on-primary-fixed-variant: rgb(40 71 119);
+    --md-sys-color-secondary-fixed: rgb(218 226 249);
+    --md-sys-color-on-secondary-fixed: rgb(19 28 43);
+    --md-sys-color-secondary-fixed-dim: rgb(190 198 220);
+    --md-sys-color-on-secondary-fixed-variant: rgb(62 71 89);
+    --md-sys-color-tertiary-fixed: rgb(250 216 253);
+    --md-sys-color-on-tertiary-fixed: rgb(40 19 46);
+    --md-sys-color-tertiary-fixed-dim: rgb(221 188 224);
+    --md-sys-color-on-tertiary-fixed-variant: rgb(87 62 92);
+    --md-sys-color-surface-dim: rgb(17 19 24);
+    --md-sys-color-surface-bright: rgb(55 57 62);
+    --md-sys-color-surface-container-lowest: rgb(12 14 19);
+    --md-sys-color-surface-container-low: rgb(25 28 32);
+    --md-sys-color-surface-container: rgb(29 32 36);
+    --md-sys-color-surface-container-high: rgb(40 42 47);
+    --md-sys-color-surface-container-highest: rgb(51 53 58);
+  }
+
+
+  .roboto-thin {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+  .roboto-light {
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .roboto-regular {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .roboto-medium {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .roboto-bold {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .roboto-black {
+    font-family: "Roboto", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+  }
+  
+  .roboto-thin-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 100;
+    font-style: italic;
+  }
+  
+  .roboto-light-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  .roboto-regular-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  .roboto-medium-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+  }
+  
+  .roboto-bold-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  .roboto-black-italic {
+    font-family: "Roboto", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+  }
+
+  
+  /* CSS base */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 body {
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--md-sys-color-background, #f4f4f4);
+    color: var(--md-sys-color-on-background, #333);
 }
 
 .header {
-    background-color: #CD032E;
-    color: white;
+    background-color: var(--md-sys-color-surface, #CD032E);
+    color: var(--md-sys-color-on-surface, white);
+    font-weight: bold;
     padding: 15px 20px;
 }
 
@@ -28,9 +159,9 @@ body {
 }
 
 .nav-panel {
-    background-color: #fff;
+    background-color: var(--md-sys-color-surface, #fff);
     width: 250px;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--md-sys-color-outline, #ddd);
     padding: 20px 10px;
 }
 
@@ -40,21 +171,21 @@ body {
 
 .nav-panel li {
     padding: 10px;
-    color: #444;
+    color: var(--md-sys-color-on-surface, #444);
     cursor: pointer;
 }
 
 .nav-panel li.active,
 .nav-panel li:hover {
-    background-color: #CD032E;
-    color: white;
+    background-color: var(--md-sys-color-secondary-container, #efefef);
+    color: var(--md-sys-color-on-tertiary, white);
     border-radius: 5px;
 }
 
 .main-content {
     flex-grow: 1;
     padding: 20px;
-    background-color: #fafafa;
+    background-color: var(--md-sys-color-surface-container, #fafafa);
 }
 
 .table-actions {
@@ -62,8 +193,8 @@ body {
 }
 
 .btn {
-    background-color: #CD032E;
-    color: white;
+    background-color: var(--md-sys-color-primary-container, #CD032E);
+    color: var(--md-sys-color-on-primary-container, white);
     border: none;
     padding: 8px 15px;
     margin-right: 10px;
@@ -72,53 +203,113 @@ body {
 }
 
 .btn:hover {
-    background-color: #b40d31;
+    background-color: var(--md-sys-color-secondary-container, #b40d31);
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
-    background-color: white;
+    background-color: var(--md-sys-color-surface, white);
     border-radius: 8px;
     overflow: hidden;
 }
 
 .table thead {
-    background-color: #f7f7f7;
+    background-color: var(--md-sys-color-surface-bright, #f7f7f7);
     text-align: left;
 }
 
 .table th,
 .table td {
     padding: 12px 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, #eee);
 }
 
 .table th {
-    color: #777;
+    color: var(--md-sys-color-outline, #777);
     font-weight: 600;
 }
 
 .table td {
-    color: #444;
+    color: var(--md-sys-color-on-surface, #444);
 }
 
 .status {
     padding: 5px 10px;
     border-radius: 12px;
     font-size: 12px;
-    color: white;
+    color: var(--md-sys-color-on-surface, white);
     text-align: center;
 }
 
 .status.in-progress {
-    background-color: #f9bb5c;
+    background-color: var(--md-sys-color-tertiary, #f9bb5c);
 }
 
 .status.not-started {
-    background-color: #86c3d3;
+    background-color: var(--md-sys-color-secondary, #86c3d3);
 }
 
 .status.published {
-    background-color: #6fcf97;
+    background-color: var(--md-sys-color-primary, #6fcf97);
 }
+
+/* CSS para la pantalla de inicio de sesión */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 65px);
+    background-color: var(--md-sys-color-surface, #f4f4f4);
+}
+
+.login-box {
+    background-color: var(--md-sys-color-surface-container, white);
+    border-color: var(--md-sys-color-on-surface, white);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--md-sys-color-on-surface, #333);
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--md-sys-color-outline, #555);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--md-sys-color-outline, #ddd);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--md-sys-color-primary-container, #CD032E);
+    color: var(--md-sys-color-on-primary-container, white);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-login:hover {
+    background-color: var(--md-sys-color-on-primary, #b40d31);
+}
+
