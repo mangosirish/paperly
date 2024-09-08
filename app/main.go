@@ -17,7 +17,14 @@ func main() {
 	// Frontend
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		templates.IndexPage().Render(r.Context(), w)
+		templates.IndexView().Render(r.Context(), w)
+	})
+	http.HandleFunc("/web-table-view", func(w http.ResponseWriter, r *http.Request) {
+		templates.TableView(r.URL.Query().Get("table")).Render(r.Context(), w)
+	})
+
+	http.HandleFunc("/web-articles", func(w http.ResponseWriter, r *http.Request) {
+		templates.TableComponent("Artricles").Render(r.Context(), w)
 	})
 
 	// API

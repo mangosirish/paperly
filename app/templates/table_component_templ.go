@@ -8,7 +8,7 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func TableView(requested_table string) templ.Component {
+func TableComponent(table_name string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -26,33 +26,20 @@ func TableView(requested_table string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"table-actions\"><button class=\"btn\">+ New</button> <button class=\"btn\">Quick edit</button> <button class=\"btn\">Share</button> <button class=\"btn\">Export to Excel</button><h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/web-" + requested_table)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(table_name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/table_view.templ`, Line: 7, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/table_component.templ`, Line: 9, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"load\" hx-target=\".main-content\" hx-swap=\"innerHTML transition:true\"><nav class=\"nav-panel\"><ul><li class=\"active\">Autores</li><li>Articulos</li><li>Servicio Social</li><li>Numeros</li></ul></nav><main class=\"main-content\">Loading... ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/web-" + requested_table)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/table_view.templ`, Line: 21, Col: 41}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2></div><table class=\"table\"><thead><tr><th>Full Name</th><th>Article</th><th>Started Date</th><th>Department</th><th>Status</th></tr></thead> <tbody><tr><td>Diego Montoya</td><td>I don't know</td><td>9/24/2020</td><td>CBI</td><td><span class=\"status in-progress\">In progress</span></td></tr><tr><td>Diego Flores</td><td>The same</td><td>10/8/2020</td><td>CBI</td><td><span class=\"status not-started\">Not started</span></td></tr><tr><td>Diego Baez</td><td>Other</td><td>7/15/2020</td><td>CSH</td><td><span class=\"status published\">Finished</span></td></tr></tbody></table>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
