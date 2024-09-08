@@ -22,20 +22,24 @@ func main() {
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		templates.IndexView().Render(r.Context(), w)
 	}).Methods("GET")
+
 	router.HandleFunc("/web-table-view", func(w http.ResponseWriter, r *http.Request) {
 		templates.TableView(r.URL.Query().Get("table")).Render(r.Context(), w)
-	})
+	}).Methods("GET")
 
-	http.HandleFunc("/web-articles", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/web-articles", func(w http.ResponseWriter, r *http.Request) {
 		templates.TableComponent("Artricles").Render(r.Context(), w)
-	})
-	http.HandleFunc("/web-authors", func(w http.ResponseWriter, r *http.Request) {
+	}).Methods("GET")
+
+	router.HandleFunc("/web-authors", func(w http.ResponseWriter, r *http.Request) {
 		templates.TableComponent("Authors").Render(r.Context(), w)
 	})
-	http.HandleFunc("/web-journals", func(w http.ResponseWriter, r *http.Request) {
+
+	router.HandleFunc("/web-journals", func(w http.ResponseWriter, r *http.Request) {
 		templates.TableComponent("Journals").Render(r.Context(), w)
 	})
-	http.HandleFunc("/web-social-service", func(w http.ResponseWriter, r *http.Request) {
+
+	router.HandleFunc("/web-social-service", func(w http.ResponseWriter, r *http.Request) {
 		templates.TableComponent("Social Service").Render(r.Context(), w)
 	})
 
@@ -98,8 +102,8 @@ func main() {
 	router.HandleFunc("/journals/online_link/{online_link}", handlers.GetJournalsByOnlineLink).Methods("GET")
 	router.HandleFunc("/journals/reserve_number/{reserve_number}", handlers.GetJournalsByReserveNumber).Methods("GET")
 
-	r.HandleFunc("/specialties", handlers.GetSpecialties).Methods("GET")
-	r.HandleFunc("/specialties/name/{name}", handlers.GetSpecialtiesByName).Methods("GET")
+	router.HandleFunc("/specialties", handlers.GetSpecialties).Methods("GET")
+	router.HandleFunc("/specialties/name/{name}", handlers.GetSpecialtiesByName).Methods("GET")
 
 	fmt.Println("Servidor en ejecución en http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
