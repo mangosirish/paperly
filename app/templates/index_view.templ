@@ -21,26 +21,48 @@ templ IndexView() {
 				</div>
 			</header>
 			<main class="cards-container">
-				<div class="card"
-                hx-get="/web-table-view?table=articles"
-                hx-target=".cards-container"
-                hx-swap="outerHTML transition:true"
-                >
+				<div
+					class="card"
+					hx-get="/web-table-view?table=articles"
+					hx-target=".cards-container"
+					hx-swap="outerHTML transition:true"
+				>
 					<div class="card-image" style="background-color: #ff9e80;"></div>
 					<div class="card-content">
 						<h3>Articulos</h3>
 					</div>
 				</div>
-				<div class="card" onclick="makePostRequest('action2')">
+				<div
+					class="card"
+					hx-get="/web-table-view?table=authors"
+					hx-target=".cards-container"
+					hx-swap="outerHTML transition:true"
+				>
 					<div class="card-image" style="background-color: #ffcc80;"></div>
 					<div class="card-content">
 						<h3>Autores</h3>
 					</div>
 				</div>
-				<div class="card" onclick="makePostRequest('action3')">
+				<div
+					class="card"
+					hx-get="/web-table-view?table=social-service"
+					hx-target=".cards-container"
+					hx-swap="outerHTML transition:true"
+				>
 					<div class="card-image" style="background-color: #80deea;"></div>
 					<div class="card-content">
 						<h3>Servicio Social</h3>
+					</div>
+				</div>
+				<div
+					class="card"
+					hx-get="/web-table-view?table=journals"
+					hx-target=".cards-container"
+					hx-swap="outerHTML transition:true"
+				>
+					<div class="card-image" style="background-color: #9580ea;"></div>
+					<div class="card-content">
+						<h3>Numeros</h3>
 					</div>
 				</div>
 			</main>

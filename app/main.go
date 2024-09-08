@@ -26,6 +26,15 @@ func main() {
 	http.HandleFunc("/web-articles", func(w http.ResponseWriter, r *http.Request) {
 		templates.TableComponent("Artricles").Render(r.Context(), w)
 	})
+	http.HandleFunc("/web-authors", func(w http.ResponseWriter, r *http.Request) {
+		templates.TableComponent("Authors").Render(r.Context(), w)
+	})
+	http.HandleFunc("/web-journals", func(w http.ResponseWriter, r *http.Request) {
+		templates.TableComponent("Journals").Render(r.Context(), w)
+	})
+	http.HandleFunc("/web-social-service", func(w http.ResponseWriter, r *http.Request) {
+		templates.TableComponent("Social Service").Render(r.Context(), w)
+	})
 
 	// API
 	http.HandleFunc("/articles", handlers.GetArticles)
