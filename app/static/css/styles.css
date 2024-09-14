@@ -171,6 +171,7 @@ body {
 
 .nav-panel li {
     padding: 10px;
+    margin-top: 10px;
     color: var(--md-sys-color-on-surface, #444);
     cursor: pointer;
 }
@@ -182,7 +183,7 @@ body {
     border-radius: 5px;
 }
 
-.main-content {
+.main-container {
     flex-grow: 1;
     padding: 20px;
     background-color: var(--md-sys-color-surface-container, #fafafa);
@@ -356,3 +357,116 @@ body {
     color: #666;
     font-weight: 400;
 }
+
+/* Form +New*/
+/* Modal Overlay */
+.form-create {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    z-index: 9999; /* Ensures it is on top of other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+/* Modal Content */
+.form-content {
+    background-color: var(--md-sys-color-surface-container, #fff);
+    color: var(--md-sys-color-on-surface, #333);
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+    font-family: "Roboto", sans-serif;
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--md-sys-color-outline, #333);
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--md-sys-color-outline-variant, #000);
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 15px;
+    font-weight: bold;
+    color: var(--md-sys-color-on-surface-variant, #444);
+}
+
+input {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--md-sys-color-outline, #ccc);
+    border-radius: 4px;
+    font-size: 16px;
+    color: var(--md-sys-color-on-surface, #333);
+    background-color: var(--md-sys-color-surface, #f9f9f9);
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: var(--md-sys-color-primary-container, #4CAF50);
+    color: var(--md-sys-color-on-primary-container, white);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: var(--md-sys-color-on-primary, #45a049);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+ 
+/*Spinner*/
+.spinner {
+    border: 4px solid var(--md-sys-color-primary, #86c3d3);
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    width: 36px;
+    height: 36px;
+    
+    animation: spin 1s cubic-bezier(0.18, 0.89, 0.32, 1.28) infinite;
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+  
+    100% {
+      transform: rotate(360deg);
+    }
+  }

@@ -1,0 +1,38 @@
+package templates
+
+templ MainContainerForTable(requested_table string) {
+	<main
+		class="main-container"
+		x-data="{open: false}"
+	>
+		<div
+			class="table-actions"
+		>
+			<button class="btn" @click="open= true">+ New</button>
+			<button class="btn">Quick edit</button>
+			<button class="btn">Share</button>
+			<button class="btn">Export to Excel</button>
+			<h2>{ requested_table }</h2>
+		</div>
+		<!-- Modal Form-->
+		<div
+			class="form-create"
+			x-show="open"
+			hx-get={ "/web/form/" + requested_table }
+			hx-swap="outerHTML transition:true"
+			hx-trigger="load"
+			hx-target=".form-create"
+		>
+			<div class="spinner"></div>
+		</div>
+		<div
+			class="table-container"
+			hx-get={ "/web/table/" + requested_table }
+			hx-swap="outerHTML transition:true"
+			hx-trigger="load"
+			hx-target=".table-container"
+		>
+			<div class="spinner"></div>
+		</div>
+	</main>
+}

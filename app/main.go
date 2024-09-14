@@ -27,21 +27,24 @@ func main() {
 		templates.TableView(r.URL.Query().Get("table")).Render(r.Context(), w)
 	}).Methods("GET")
 
-	router.HandleFunc("/web-articles", func(w http.ResponseWriter, r *http.Request) {
-		templates.TableComponent("Artricles").Render(r.Context(), w)
+	router.HandleFunc("/web/table/{table}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		table := vars["table"]
+		templates.TableMainContainer(table).Render(r.Context(), w)
 	}).Methods("GET")
 
-	router.HandleFunc("/web-authors", func(w http.ResponseWriter, r *http.Request) {
-		templates.TableComponent("Authors").Render(r.Context(), w)
-	})
+	router.HandleFunc("/web/form/{form}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		form := vars["form"]
+		templates.FormCreateItem(form).Render(r.Context(), w)
+	}).Methods("GET")
 
-	router.HandleFunc("/web-journals", func(w http.ResponseWriter, r *http.Request) {
-		templates.TableComponent("Journals").Render(r.Context(), w)
-	})
+	router.HandleFunc("/web/{table}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		table := vars["table"]
+		templates.MainContainerForTable(table).Render(r.Context(), w)
 
-	router.HandleFunc("/web-social-service", func(w http.ResponseWriter, r *http.Request) {
-		templates.TableComponent("Social Service").Render(r.Context(), w)
-	})
+	}).Methods("GET")
 
 	// API
 	router.HandleFunc("/articles", handlers.GetArticles).Methods("GET")
