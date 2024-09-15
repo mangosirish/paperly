@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mangosirish/paperly/components"
 	"github.com/mangosirish/paperly/db"
 	"github.com/mangosirish/paperly/handlers"
 	"github.com/mangosirish/paperly/templates"
@@ -19,30 +20,33 @@ func main() {
 
 	// Frontend
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		templates.IndexView().Render(r.Context(), w)
 	}).Methods("GET")
 
-	router.HandleFunc("/web-table-view", func(w http.ResponseWriter, r *http.Request) {
-		templates.TableView(r.URL.Query().Get("table")).Render(r.Context(), w)
+	router.HandleFunc("/web/view/{table}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		table := vars["table"]
+		templates.TableView(table).Render(r.Context(), w)
 	}).Methods("GET")
 
 	router.HandleFunc("/web/table/{table}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		table := vars["table"]
-		templates.TableMainContainer(table).Render(r.Context(), w)
+		components.Table(table).Render(r.Context(), w)
 	}).Methods("GET")
 
 	router.HandleFunc("/web/form/{form}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		form := vars["form"]
-		templates.FormCreateItem(form).Render(r.Context(), w)
+		components.CreateItemForm(form).Render(r.Context(), w)
 	}).Methods("GET")
 
 	router.HandleFunc("/web/{table}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		table := vars["table"]
-		templates.MainContainerForTable(table).Render(r.Context(), w)
+		components.Container(table).Render(r.Context(), w)
 
 	}).Methods("GET")
 

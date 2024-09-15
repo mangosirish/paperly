@@ -1,51 +1,30 @@
 package templates
 
+import "github.com/mangosirish/paperly/components"
+
 templ TableView(requested_table string) {
 	/*html*/
-	<div
-		class="container"
-		x-data={ "{ activeTab: '" + requested_table + "' }" }
-	>
-		<nav class="nav-panel">
-			<ul>
-				<li
-					:class="{ 'active': activeTab === 'authors' }"
-					x-on:click="activeTab = 'authors'"
-					hx-get="/web/authors"
+	<!DOCTYPE html>
+	<html lang="en">
+		@components.Head()
+		<body>
+		@components.Header()
+			<div
+				class="container"
+				x-data={ "{ activeTab: '" + requested_table + "' }" }
+			>
+				<!-- Nav Bar-->
+				@components.NavBar()
+				<main
+					class="main-container"
+					hx-get={ "/web/" + requested_table }
+					hx-trigger="load"
 					hx-target=".main-container"
 					hx-swap="outerHTML transition:true"
-				>Autores</li>
-				<li
-					:class="{ 'active': activeTab === 'articles' }"
-					x-on:click="activeTab = 'articles'"
-					hx-get="/web/articles"
-					hx-target=".main-container"
-					hx-swap="outerHTML transition:true"
-				>Articulos</li>
-				<li
-					:class="{ 'active': activeTab === 'social-service' }"
-					x-on:click="activeTab = 'social-service'"
-					hx-get="/web/social-service"
-					hx-target=".main-container"
-					hx-swap="outerHTML transition:true"
-				>Servicio Social</li>
-				<li
-					:class="{ 'active': activeTab === 'journals' }"
-					x-on:click="activeTab = 'journals'"
-					hx-get="/web/journals"
-					hx-target=".main-container"
-					hx-swap="outerHTML transition:true"
-				>Numeros</li>
-			</ul>
-		</nav>
-		<main
-			class="main-container"
-			hx-get={ "/web/" + requested_table }
-			hx-trigger="load"
-			hx-target=".main-container"
-			hx-swap="outerHTML transition:true"
-		>
-			<div class="spinner"></div>
-		</main>
-	</div>
+				>
+					<div class="spinner"></div>
+				</main>
+			</div>
+		</body>
+	</html>
 }

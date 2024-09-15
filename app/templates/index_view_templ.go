@@ -8,6 +8,8 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/mangosirish/paperly/components"
+
 func IndexView() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -26,7 +28,43 @@ func IndexView() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Content Team Interface</title><script src=\"../static/js/htmx.min.js\"></script><script src=\"../static/js/alpine.min.js\" defer></script><link rel=\"stylesheet\" href=\"../static/css/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap\" rel=\"stylesheet\"></head><body><header class=\"header\"><div class=\"header-content\"><h1>Revista Tiempo UAM</h1></div></header><main class=\"cards-container\"><div class=\"card\" hx-get=\"/web-table-view?table=articles\" hx-target=\".cards-container\" hx-swap=\"outerHTML transition:true\"><div class=\"card-image\" style=\"background-color: #ff9e80;\"></div><div class=\"card-content\"><h3>Articulos</h3></div></div><div class=\"card\" hx-get=\"/web-table-view?table=authors\" hx-target=\".cards-container\" hx-swap=\"outerHTML transition:true\"><div class=\"card-image\" style=\"background-color: #ffcc80;\"></div><div class=\"card-content\"><h3>Autores</h3></div></div><div class=\"card\" hx-get=\"/web-table-view?table=social-service\" hx-target=\".cards-container\" hx-swap=\"outerHTML transition:true\"><div class=\"card-image\" style=\"background-color: #80deea;\"></div><div class=\"card-content\"><h3>Servicio Social</h3></div></div><div class=\"card\" hx-get=\"/web-table-view?table=journals\" hx-target=\".cards-container\" hx-swap=\"outerHTML transition:true\"><div class=\"card-image\" style=\"background-color: #9580ea;\"></div><div class=\"card-content\"><h3>Numeros</h3></div></div></main></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Head().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Header().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"cards-container\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Card("Articulos", "articles", "#ff9e80").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Card("Autores", "authors", "#ffcc80").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Card("Servicio Social", "social-service", "#80deea").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Card("Numeros", "journals", "#9580ea").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

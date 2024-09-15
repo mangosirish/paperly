@@ -1,0 +1,41 @@
+package components
+
+templ Table(requested_table string) {
+	<div class="table-container">
+		<h2>{ requested_table }</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Full Name</th>
+					<th>Article</th>
+					<th>Started Date</th>
+					<th>Department</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Diego Montoya</td>
+					<td>I don't know</td>
+					<td>9/24/2020</td>
+					<td>CBI</td>
+					<td><span class="status in-progress">In progress</span></td>
+				</tr>
+				<tr>
+					<td>Diego Flores</td>
+					<td>The same</td>
+					<td>10/8/2020</td>
+					<td>CBI</td>
+					<td><span class="status not-started">Not started</span></td>
+				</tr>
+				<tr>
+					<td>Diego Baez</td>
+					<td>Other</td>
+					<td>7/15/2020</td>
+					<td>CSH</td>
+					<td><span class="status published">Finished</span></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+}

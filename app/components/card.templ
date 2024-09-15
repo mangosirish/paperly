@@ -1,0 +1,20 @@
+package components
+
+css CardStyle(background_color string) {
+	background-color: { background_color };
+}
+
+templ Card(title, table, background_color string) {
+	<a href={templ.SafeURL("/web/view/" + table)}>
+		<div
+			class="card"
+		>
+			<div
+				class={ "card-image", CardStyle(background_color) }
+			></div>
+			<div class="card-content">
+				<h3>{ title }</h3>
+			</div>
+		</div>
+	</a>
+}

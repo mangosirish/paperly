@@ -1,0 +1,38 @@
+package components
+
+const nav_target = ".main-container"
+
+templ NavBar() {
+	<nav class="nav-panel">
+		<ul>
+			<li
+				:class="{ 'active': activeTab === 'authors' }"
+				x-on:click="activeTab = 'authors'"
+				hx-get="/web/authors"
+				hx-target={ nav_target }
+				hx-swap="outerHTML transition:true"
+			>Autores</li>
+			<li
+				:class="{ 'active': activeTab === 'articles' }"
+				x-on:click="activeTab = 'articles'"
+				hx-get="/web/articles"
+				hx-target={ nav_target }
+				hx-swap="outerHTML transition:true"
+			>Articulos</li>
+			<li
+				:class="{ 'active': activeTab === 'social-service' }"
+				x-on:click="activeTab = 'social-service'"
+				hx-get="/web/social-service"
+				hx-target={ nav_target }
+				hx-swap="outerHTML transition:true"
+			>Servicio Social</li>
+			<li
+				:class="{ 'active': activeTab === 'journals' }"
+				x-on:click="activeTab = 'journals'"
+				hx-get="/web/journals"
+				hx-target={ nav_target }
+				hx-swap="outerHTML transition:true"
+			>Numeros</li>
+		</ul>
+	</nav>
+}

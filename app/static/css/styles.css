@@ -470,3 +470,13 @@ button:hover {
       transform: rotate(360deg);
     }
   }
+  a {
+    color: inherit; 
+    text-decoration: none; 
+}
+
+a * {
+    color: inherit; 
+    font: inherit; 
+    text-decoration: none;
+}

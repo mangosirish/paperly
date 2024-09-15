@@ -1,0 +1,31 @@
+package components
+
+templ Container(requested_table string) {
+	<main
+		class="main-container"
+		x-data="{open_form_create: false, action: 0}"
+	>
+		@TableActions()
+		
+		<!-- Modal Form-->
+		<div
+			class="form-create"
+			x-show="open_form_create"
+			hx-get={ "/web/form/" + requested_table }
+			hx-swap="outerHTML transition:true"
+			hx-trigger="load"
+			hx-target=".form-create"
+		>
+			<div class="spinner"></div>
+		</div>
+		<div
+			class="table-container"
+			hx-get={ "/web/table/" + requested_table }
+			hx-swap="outerHTML transition:true"
+			hx-trigger="load"
+			hx-target=".table-container"
+		>
+			<div class="spinner"></div>
+		</div>
+	</main>
+}
