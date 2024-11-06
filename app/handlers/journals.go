@@ -388,3 +388,59 @@ func GetJournalsByReserveNumber(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(journals)
 }
+
+func GetJournalsWithArticles(w http.ResponseWriter, r *http.Request) {
+    query := `
+        SELECT 
+            CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', EXTRACT(YEAR FROM j.publication_date)) AS "ID",
+            j.status AS "Estado",
+            j.age AS "Año (de antigüedad)",
+            j.volume_number AS "Volumen",
+            j.number AS "Número",
+            COALESCE(NULLIF(j.special_number, 0), 'N/A') AS "Especial",
+            CONCAT(j.start_month_period, '-', j.end_month_period) AS "Periodo",
+            EXTRACT(YEAR FROM j.publication_date) AS "Año (de publicación)",
+            CONCAT(j.edition_number, '.ª ed.') AS "Edición",
+            CONCAT('Año ', j.age, ', volumen ', j.volume_number, ', número ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', EXTRACT(YEAR FROM j.publication_date)) AS "Ejemplar (largo)",
+            CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period) AS "Ejemplar (medio)",
+            CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number) AS "Ejemplar (corto)",
+            STRING_AGG(art.title, ', ') AS "Lista de artículos",
+            j.publication_date AS "Fecha"
+        FROM 
+            Journals j
+        JOIN 
+            TransitiveArticleJournals taj ON j.journal_id = taj.journal_id
+        JOIN 
+            Articles art ON taj.article_id = art.article_id
+        GROUP BY 
+            "ID", "Estado", "Año (de antigüedad)", "Volumen", "Número", "Especial", "Periodo", "Año (de publicación)", "Edición", "Ejemplar (largo)", "Ejemplar (medio)", "Ejemplar (corto)", "Fecha"
+    `
+
+    rows, err := db.DB.Query(query)
+    if err != nil {
+        log.Printf("Error al ejecutar la consulta: %v\n", err)
+        http.Error(w, "Error al obtener los ejemplares", http.StatusInternalServerError)
+        return
+    }
+    defer rows.Close()
+
+    journals := []map[string]interface{}{}
+    for rows.Next() {
+        var journal map[string]interface{}
+        if err := rows.Scan(
+            &journal["ID"], &journal["Estado"], &journal["Año (de antigüedad)"], 
+            &journal["Volumen"], &journal["Número"], &journal["Especial"], 
+            &journal["Periodo"], &journal["Año (de publicación)"], &journal["Edición"],
+            &journal["Ejemplar (largo)"], &journal["Ejemplar (medio)"], 
+            &journal["Ejemplar (corto)"], &journal["Lista de artículos"], &journal["Fecha"],
+        ); err != nil {
+            log.Printf("Error al escanear los ejemplares: %v\n", err)
+            http.Error(w, "Error al escanear los ejemplares", http.StatusInternalServerError)
+            return
+        }
+        journals = append(journals, journal)
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(journals)
+}

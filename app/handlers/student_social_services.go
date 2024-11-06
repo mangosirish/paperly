@@ -616,3 +616,79 @@ func GetStudentSocialServicesByIsCompletionLetterSubmitted(w http.ResponseWriter
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(services)
 }
+
+func GetStudentSocialServiceDetails(w http.ResponseWriter, r *http.Request) {
+    query := `
+        SELECT 
+            CONCAT(pe.first_surname, ' ', pe.second_surname, ', ', pe.first_name) AS "Nombre",
+            CONCAT(pe.first_surname, ' ', pe.second_surname) AS "Apellido(s)",
+            pe.first_name AS "Nombre(s)",
+            sss.social_service_id AS "Matrícula",
+            sss.division AS "División",
+            ac.name AS "Carrera",
+            sss.start_date AS "Fecha de inicio",
+            sss.end_date AS "Fecha de término",
+            sss.status AS "Estado",
+            sss.documentation AS "Notas",
+            ARRAY[
+                sss.is_enrollment_request_submitted,
+                sss.is_presentation_letter_submitted,
+                sss.is_acceptance_letter_submitted,
+                sss.is_advisor_appointment_submitted,
+                sss.is_commitment_letter_submitted,
+                sss.is_intermediate_report_submitted,
+                sss.is_intermediate_report_validation_submitted,
+                sss.is_final_report_submitted,
+                sss.is_completion_letter_submitted
+            ] AS "Documentación"
+        FROM 
+            StudentSocialServices sss
+        JOIN 
+            People pe ON sss.person_id = pe.person_id
+        JOIN 
+            Authors a ON pe.person_id = a.person_id
+        JOIN 
+            TransitiveAuthorAcademicProfiles taap ON a.author_id = taap.author_id
+        JOIN 
+            AcademicProfiles ap ON taap.academic_profile_id = ap.academic_profile_id
+        JOIN 
+            AcademicCareers ac ON ap.career_id = ac.career_id`
+
+    rows, err := db.DB.Query(query)
+    if err != nil {
+        log.Printf("Error al ejecutar la consulta: %v\n", err)
+        http.Error(w, "Error al obtener los detalles del servicio social", http.StatusInternalServerError)
+        return
+    }
+    defer rows.Close()
+
+    studentSocialServices := []map[string]interface{}{}
+    for rows.Next() {
+        var nombre, apellidos, nombres, matricula, division, carrera, estado, notas string
+        var fechaInicio, fechaTermino sql.NullTime
+        var documentacion []bool
+
+        if err := rows.Scan(&nombre, &apellidos, &nombres, &matricula, &division, &carrera, &fechaInicio, &fechaTermino, &estado, &notas, pq.Array(&documentacion)); err != nil {
+            log.Printf("Error al escanear los detalles del servicio social: %v\n", err)
+            http.Error(w, "Error al escanear los detalles del servicio social", http.StatusInternalServerError)
+            return
+        }
+
+        studentSocialServices = append(studentSocialServices, map[string]interface{}{
+            "Nombre":         nombre,
+            "Apellido(s)":    apellidos,
+            "Nombre(s)":      nombres,
+            "Matrícula":      matricula,
+            "División":       division,
+            "Carrera":        carrera,
+            "Fecha de inicio": fechaInicio.Time,
+            "Fecha de término": fechaTermino.Time,
+            "Estado":          estado,
+            "Notas":           notas,
+            "Documentación":   documentacion,
+        })
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(studentSocialServices)
+}

@@ -56,6 +56,7 @@ func main() {
 	router.HandleFunc("/articles/type/{type}", handlers.GetArticlesByType).Methods("GET")
 	router.HandleFunc("/articles/reception-date/{reception_date}", handlers.GetArticlesByReceptionDate).Methods("GET")
 	router.HandleFunc("/articles/status/{status}", handlers.GetArticlesByStatus).Methods("GET")
+	router.HandleFunc("/articles/details", handlers.GetJoinedArticleInfo).Methods("GET")
 
 	router.HandleFunc("/people", handlers.GetPeople).Methods("GET")
 	router.HandleFunc("/people/first_name/{first_name}", handlers.GetPeopleByFirstName).Methods("GET")
@@ -68,6 +69,7 @@ func main() {
 	router.HandleFunc("/authors", handlers.GetAuthors).Methods("GET")
 	router.HandleFunc("/authors/notes/{notes}", handlers.GetAuthorsByNotes).Methods("GET")
 	router.HandleFunc("/authors/person-id/{person_id}", handlers.GetAuthorsByPersonID).Methods("GET")
+	router.HandleFunc("/authors/details", handlers.GetJoinedAuthorInfo).Methods("GET")
 
 	router.HandleFunc("/academic-careers", handlers.GetAcademicCareers).Methods("GET")
 	router.HandleFunc("/academic-careers/name/{name}", handlers.GetAcademicCareersByName).Methods("GET")
@@ -95,6 +97,7 @@ func main() {
 	router.HandleFunc("/student-social-services/is_intermediate_report_validation_submitted/{is_intermediate_report_validation_submitted}", handlers.GetStudentSocialServicesByIsIntermediateReportValidationSubmitted).Methods("GET")
 	router.HandleFunc("/student-social-services/is_final_report_submitted/{is_final_report_submitted}", handlers.GetStudentSocialServicesByIsFinalReportSubmitted).Methods("GET")
 	router.HandleFunc("/student-social-services/is_completion_letter_submitted/{is_completion_letter_submitted}", handlers.GetStudentSocialServicesByIsCompletionLetterSubmitted).Methods("GET")
+	router.HandleFunc("/student-social-services/details", handlers.GetStudentSocialServiceDetails).Methods("GET")
 
 	router.HandleFunc("/journals", handlers.GetJournals).Methods("GET")
 	router.HandleFunc("/journals/status/{status}", handlers.GetJournalsByStatus).Methods("GET")
@@ -108,6 +111,7 @@ func main() {
 	router.HandleFunc("/journals/special_number/{special_number}", handlers.GetJournalsBySpecialNumber).Methods("GET")
 	router.HandleFunc("/journals/online_link/{online_link}", handlers.GetJournalsByOnlineLink).Methods("GET")
 	router.HandleFunc("/journals/reserve_number/{reserve_number}", handlers.GetJournalsByReserveNumber).Methods("GET")
+	router.HandleFunc("/journals/details", handlers.GetJournalsWithArticles).Methods("GET")
 
 	router.HandleFunc("/specialties", handlers.GetSpecialties).Methods("GET")
 	router.HandleFunc("/specialties/name/{name}", handlers.GetSpecialtiesByName).Methods("GET")
