@@ -28,7 +28,7 @@ func NavBar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-panel\"><ul><li :class=\"{ &#39;active&#39;: activeTab === &#39;authors&#39; }\" x-on:click=\"activeTab = &#39;authors&#39;\" hx-get=\"/web/authors\" hx-target=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-panel\"><ul><li :class=\"{ &#39;active&#39;: activeTab === &#39;authors&#39; }\" x-on:click=\"activeTab = &#39;authors&#39;\" hx-get=\"/web/container/authors\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,46 +41,46 @@ func NavBar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\">Autores</li><li :class=\"{ &#39;active&#39;: activeTab === &#39;articles&#39; }\" x-on:click=\"activeTab = &#39;articles&#39;\" hx-get=\"/web/articles\" hx-target=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\" hx-replace-url=\"/web/authors\">Autores</li><li :class=\"{ &#39;active&#39;: activeTab === &#39;articles&#39; }\" x-on:click=\"activeTab = &#39;articles&#39;\" hx-get=\"/web/container/articles\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(nav_target)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav_var.templ`, Line: 19, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav_var.templ`, Line: 20, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\">Articulos</li><li :class=\"{ &#39;active&#39;: activeTab === &#39;social-service&#39; }\" x-on:click=\"activeTab = &#39;social-service&#39;\" hx-get=\"/web/social-service\" hx-target=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\" hx-replace-url=\"/web/articles\">Articulos</li><li :class=\"{ &#39;active&#39;: activeTab === &#39;social-service&#39; }\" x-on:click=\"activeTab = &#39;social-service&#39;\" hx-get=\"/web/container/social-service\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(nav_target)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav_var.templ`, Line: 26, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav_var.templ`, Line: 28, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\">Servicio Social</li><li :class=\"{ &#39;active&#39;: activeTab === &#39;journals&#39; }\" x-on:click=\"activeTab = &#39;journals&#39;\" hx-get=\"/web/journals\" hx-target=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\" hx-replace-url=\"/web/social-service\">Servicio Social</li><li :class=\"{ &#39;active&#39;: activeTab === &#39;journals&#39; }\" x-on:click=\"activeTab = &#39;journals&#39;\" hx-get=\"/web/container/journals\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(nav_target)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav_var.templ`, Line: 33, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav_var.templ`, Line: 36, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\">Numeros</li></ul></nav>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML transition:true\" hx-replace-url=\"/web/journals\">Numeros</li></ul></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

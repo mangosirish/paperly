@@ -359,62 +359,68 @@ body {
 }
 
 /* Form +New*/
-/* Modal Overlay */
+/* Fondo oscuro semitransparente */
 .form-create {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
-    z-index: 9999; /* Ensures it is on top of other elements */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-/* Modal Content */
-.form-content {
-    background-color: var(--md-sys-color-surface-container, #fff);
-    color: var(--md-sys-color-on-surface, #333);
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    animation: fadeIn 0.3s ease-out;
-    font-family: "Roboto", sans-serif;
+    z-index: 1000;
 }
 
-/* Close Button */
+/* Contenedor del formulario */
+.form-content {
+    background: #fff;
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+}
+
+/* Hacer el contenido desplazable */
+.form-scrollable {
+    overflow-y: auto;
+    max-height: 80vh;
+    padding-right: 5px;
+    margin-top: 20px;
+}
+
+/* Botón de cierre */
 .close {
     position: absolute;
     top: 10px;
-    right: 15px;
-    font-size: 28px;
-    font-weight: bold;
-    color: var(--md-sys-color-outline, #333);
+    right: 10px;
+    font-size: 24px;
+    color: var(--md-sys-color-on-surface-variant, #444);
     cursor: pointer;
 }
 
-.close:hover,
-.close:focus {
-    color: var(--md-sys-color-outline-variant, #000);
-}
-
-/* Form Styles */
+/* Estilos del formulario */
 form {
     display: flex;
     flex-direction: column;
 }
 
+/* Etiquetas */
 label {
     margin-top: 15px;
     font-weight: bold;
     color: var(--md-sys-color-on-surface-variant, #444);
 }
 
-input {
+/* Campos de entrada */
+input, textarea {
     padding: 10px;
     margin-top: 5px;
     border: 1px solid var(--md-sys-color-outline, #ccc);
@@ -424,6 +430,7 @@ input {
     background-color: var(--md-sys-color-surface, #f9f9f9);
 }
 
+/* Botón de envío */
 button {
     margin-top: 20px;
     padding: 10px;
@@ -438,6 +445,7 @@ button {
 button:hover {
     background-color: var(--md-sys-color-on-primary, #45a049);
 }
+
 
 /* Animation */
 @keyframes fadeIn {

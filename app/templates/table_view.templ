@@ -17,7 +17,7 @@ templ TableView(requested_table string) {
 				@components.NavBar()
 				<main
 					class="main-container"
-					hx-get={ "/web/" + requested_table }
+					hx-get={ "/web/container/" + requested_table }
 					hx-trigger="load"
 					hx-target=".main-container"
 					hx-swap="outerHTML transition:true"

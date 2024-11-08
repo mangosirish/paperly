@@ -3,7 +3,13 @@ package components
 templ Container(requested_table string) {
 	<main
 		class="main-container"
-		x-data="{open_form_create: false, action: 0}"
+		x-data=" {open_form_create: false, action: 0, 
+		confirmClose() {
+                if (confirm('¿Realmente desea salir sin guardar?')) {
+                    this.open_form_create = false;
+                }
+            }
+			} "
 	>
 		@TableActions()
 		
@@ -12,7 +18,7 @@ templ Container(requested_table string) {
 			class="form-create"
 			x-show="open_form_create"
 			hx-get={ "/web/form/" + requested_table }
-			hx-swap="outerHTML transition:true"
+			hx-swap="outerHTML"
 			hx-trigger="load"
 			hx-target=".form-create"
 		>

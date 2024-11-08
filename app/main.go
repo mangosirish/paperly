@@ -25,7 +25,7 @@ func main() {
 		templates.IndexView().Render(r.Context(), w)
 	}).Methods("GET")
 
-	router.HandleFunc("/web/view/{table}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/web/{table}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		table := vars["table"]
 		templates.TableView(table).Render(r.Context(), w)
@@ -43,7 +43,7 @@ func main() {
 		components.CreateItemForm(form).Render(r.Context(), w)
 	}).Methods("GET")
 
-	router.HandleFunc("/web/{table}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/web/container/{table}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		table := vars["table"]
 		components.Container(table).Render(r.Context(), w)
