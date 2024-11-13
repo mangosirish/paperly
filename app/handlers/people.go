@@ -33,6 +33,47 @@ func GetPeople(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(people)
 }
 
+func SearchPeople(w http.ResponseWriter, r *http.Request) {
+    queryParam := r.URL.Query().Get("query")
+    if queryParam == "" {
+        http.Error(w, "Parámetro de búsqueda 'query' requerido", http.StatusBadRequest)
+        return
+    }
+
+    query := `
+        SELECT person_id, first_name, middle_name, first_surname, second_surname, personal_email, institutional_email 
+        FROM "People" 
+        WHERE first_name ILIKE '%' || $1 || '%' 
+           OR middle_name ILIKE '%' || $1 || '%' 
+           OR first_surname ILIKE '%' || $1 || '%' 
+           OR second_surname ILIKE '%' || $1 || '%' 
+           OR personal_email ILIKE '%' || $1 || '%'
+           OR institutional_email ILIKE '%' || $1 || '%'
+    `
+
+    rows, err := db.DB.Query(query, queryParam)
+    if err != nil {
+        log.Printf("Error al ejecutar la consulta: %v\n", err)
+        http.Error(w, "Error al buscar las personas", http.StatusInternalServerError)
+        return
+    }
+    defer rows.Close()
+
+    people := []models.Person{}
+    for rows.Next() {
+        var person models.Person
+        if err := rows.Scan(&person.PersonID, &person.FirstName, &person.MiddleName, &person.FirstSurname, &person.SecondSurname, &person.PersonalEmail, &person.InstitutionalEmail); err != nil {
+            log.Printf("Error al escanear las personas: %v\n", err)
+            http.Error(w, "Error al escanear las personas", http.StatusInternalServerError)
+            return
+        }
+        people = append(people, person)
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(people)
+}
+
 func GetPeopleByFirstName(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     firstName := vars["first_name"]

@@ -182,31 +182,47 @@ func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
     }
     defer rows.Close()
 
-    results := []map[string]interface{}{}
+    articles := []map[string]interface{}{}
     for rows.Next() {
-        var result map[string]interface{}
-        err := rows.Scan(
-            &result["Nombre"],
-            &result["Autor"],
-            &result["Tipo"],
-            &result["Antigüedad"],
-            &result["Fecha de recepción"],
-            &result["Ejemplar"],
-            &result["Estado"],
-            &result["Autor Plano"],
-            &result["Ejemplar Plano"],
-            &result["Anotaciones"],
-            &result["Numeración"],
-            &result["Artículo original"],
-        )
-        if err != nil {
+        var nombre, autor, tipo, ejemplar, estado, autorPlano, ejemplarPlano, anotaciones, numeracion, articuloOriginal string
+        var antiguedad int
+        var fechaRecepcion sql.NullTime
+
+        if err := rows.Scan(
+            &nombre,
+            &autor,
+            &tipo,
+            &antiguedad,
+            &fechaRecepcion,
+            &ejemplar,
+            &estado,
+            &autorPlano,
+            &ejemplarPlano,
+            &anotaciones,
+            &numeracion,
+            &articuloOriginal,
+        ); err != nil {
             log.Printf("Error al escanear los datos: %v\n", err)
             http.Error(w, "Error al procesar los datos", http.StatusInternalServerError)
             return
         }
-        results = append(results, result)
+
+        articles = append(articles, map[string]interface{}{
+            "Nombre":            nombre,
+            "Autor":             autor,
+            "Tipo":              tipo,
+            "Antigüedad":        antiguedad,
+            "Fecha de recepción": fechaRecepcion.Time,
+            "Ejemplar":          ejemplar,
+            "Estado":            estado,
+            "Autor Plano":       autorPlano,
+            "Ejemplar Plano":    ejemplarPlano,
+            "Anotaciones":       anotaciones,
+            "Numeración":        numeracion,
+            "Artículo original": articuloOriginal,
+        })
     }
 
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(results)
+    json.NewEncoder(w).Encode(articles)
 }

@@ -132,27 +132,37 @@ func GetJoinedAuthorInfo(w http.ResponseWriter, r *http.Request) {
     }
     defer rows.Close()
 
-    results := []map[string]interface{}{}
+    authors := []map[string]interface{}{}
     for rows.Next() {
-        var result map[string]interface{}
-        err := rows.Scan(
-            &result["Nombre"],
-            &result["Carrera"],
-            &result["Institución"],
-            &result["Facultad"],
-            &result["Correo electrónico"],
-            &result["Lista de artículos"],
-            &result["Anotaciones"],
-            &result["Área de concentración"],
-        )
-        if err != nil {
+        var nombre, carrera, institucion, facultad, correo, listaArticulos, anotaciones, areaConcentracion string
+
+        if err := rows.Scan(
+            &nombre,
+            &carrera,
+            &institucion,
+            &facultad,
+            &correo,
+            &listaArticulos,
+            &anotaciones,
+            &areaConcentracion,
+        ); err != nil {
             log.Printf("Error al escanear los datos: %v\n", err)
             http.Error(w, "Error al procesar los datos", http.StatusInternalServerError)
             return
         }
-        results = append(results, result)
+
+        authors = append(authors, map[string]interface{}{
+            "Nombre":              nombre,
+            "Carrera":             carrera,
+            "Institución":         institucion,
+            "Facultad":            facultad,
+            "Correo electrónico":  correo,
+            "Lista de artículos":  listaArticulos,
+            "Anotaciones":         anotaciones,
+            "Área de concentración": areaConcentracion,
+        })
     }
 
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(results)
+    json.NewEncoder(w).Encode(authors)
 }

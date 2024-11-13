@@ -59,6 +59,7 @@ func main() {
 	router.HandleFunc("/articles/details", handlers.GetJoinedArticleInfo).Methods("GET")
 
 	router.HandleFunc("/people", handlers.GetPeople).Methods("GET")
+	router.HandleFunc("/people/search/{query}", handlers.SearchPeople).Methods("GET")
 	router.HandleFunc("/people/first_name/{first_name}", handlers.GetPeopleByFirstName).Methods("GET")
 	router.HandleFunc("/people/middle_name/{middle_name}", handlers.GetPeopleByMiddleName).Methods("GET")
 	router.HandleFunc("/people/first_surname/{first_surname}", handlers.GetPeopleByFirstSurname).Methods("GET")

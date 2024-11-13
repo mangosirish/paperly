@@ -426,19 +426,34 @@ func GetJournalsWithArticles(w http.ResponseWriter, r *http.Request) {
 
     journals := []map[string]interface{}{}
     for rows.Next() {
-        var journal map[string]interface{}
+        var id, estado, anoAntiguedad, volumen, numero, especial, periodo, anoPublicacion, edicion, ejemplarLargo, ejemplarMedio, ejemplarCorto, listaArticulos string
+        var fecha sql.NullTime
+
         if err := rows.Scan(
-            &journal["ID"], &journal["Estado"], &journal["Año (de antigüedad)"], 
-            &journal["Volumen"], &journal["Número"], &journal["Especial"], 
-            &journal["Periodo"], &journal["Año (de publicación)"], &journal["Edición"],
-            &journal["Ejemplar (largo)"], &journal["Ejemplar (medio)"], 
-            &journal["Ejemplar (corto)"], &journal["Lista de artículos"], &journal["Fecha"],
+            &id, &estado, &anoAntiguedad, &volumen, &numero, &especial, &periodo, &anoPublicacion,
+            &edicion, &ejemplarLargo, &ejemplarMedio, &ejemplarCorto, &listaArticulos, &fecha,
         ); err != nil {
             log.Printf("Error al escanear los ejemplares: %v\n", err)
             http.Error(w, "Error al escanear los ejemplares", http.StatusInternalServerError)
             return
         }
-        journals = append(journals, journal)
+
+        journals = append(journals, map[string]interface{}{
+            "ID":                 id,
+            "Estado":             estado,
+            "Año (de antigüedad)": anoAntiguedad,
+            "Volumen":            volumen,
+            "Número":             numero,
+            "Especial":           especial,
+            "Periodo":            periodo,
+            "Año (de publicación)": anoPublicacion,
+            "Edición":            edicion,
+            "Ejemplar (largo)":   ejemplarLargo,
+            "Ejemplar (medio)":   ejemplarMedio,
+            "Ejemplar (corto)":   ejemplarCorto,
+            "Lista de artículos": listaArticulos,
+            "Fecha":              fecha.Time,
+        })
     }
 
     w.Header().Set("Content-Type", "application/json")
