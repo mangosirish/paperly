@@ -1,152 +1,154 @@
 package handlers
 
 import (
-    "encoding/json"
-    "log"
-    "net/http"
-    "github.com/mangosirish/paperly/db"
-    "github.com/mangosirish/paperly/models"
-    "github.com/gorilla/mux"
+	"database/sql"
+	"encoding/json"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/mangosirish/paperly/db"
+	"github.com/mangosirish/paperly/models"
 )
 
 func GetArticles(w http.ResponseWriter, r *http.Request) {
-    rows, err := db.DB.Query(`SELECT article_id, title, type, reception_date, status FROM "Articles"`)
-    if err != nil {
-        log.Printf("Error al ejecutar la consulta: %v\n", err)
-        http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	rows, err := db.DB.Query(`SELECT article_id, title, type, reception_date, status FROM "Articles"`)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    articles := []models.Article{}
-    for rows.Next() {
-        var article models.Article
-        if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
-            log.Printf("Error al escanear los artículos: %v\n", err)
-            http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
-            return
-        }
-        articles = append(articles, article)
-    }
+	articles := []models.Article{}
+	for rows.Next() {
+		var article models.Article
+		if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
+			log.Printf("Error al escanear los artículos: %v\n", err)
+			http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
+			return
+		}
+		articles = append(articles, article)
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(articles)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(articles)
 }
 
 func GetArticlesByTitle(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    title := vars["title"]
+	vars := mux.Vars(r)
+	title := vars["title"]
 
-    query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE title = $1`
-    rows, err := db.DB.Query(query, title)
-    if err != nil {
-        log.Printf("Error al ejecutar la consulta: %v\n", err)
-        http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE title = $1`
+	rows, err := db.DB.Query(query, title)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    articles := []models.Article{}
-    for rows.Next() {
-        var article models.Article
-        if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
-            log.Printf("Error al escanear los artículos: %v\n", err)
-            http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
-            return
-        }
-        articles = append(articles, article)
-    }
+	articles := []models.Article{}
+	for rows.Next() {
+		var article models.Article
+		if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
+			log.Printf("Error al escanear los artículos: %v\n", err)
+			http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
+			return
+		}
+		articles = append(articles, article)
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(articles)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(articles)
 }
 
 func GetArticlesByType(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    articleType := vars["type"]
+	vars := mux.Vars(r)
+	articleType := vars["type"]
 
-    query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE type = $1`
-    rows, err := db.DB.Query(query, articleType)
-    if err != nil {
-        log.Printf("Error al ejecutar la consulta: %v\n", err)
-        http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE type = $1`
+	rows, err := db.DB.Query(query, articleType)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    articles := []models.Article{}
-    for rows.Next() {
-        var article models.Article
-        if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
-            log.Printf("Error al escanear los artículos: %v\n", err)
-            http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
-            return
-        }
-        articles = append(articles, article)
-    }
+	articles := []models.Article{}
+	for rows.Next() {
+		var article models.Article
+		if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
+			log.Printf("Error al escanear los artículos: %v\n", err)
+			http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
+			return
+		}
+		articles = append(articles, article)
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(articles)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(articles)
 }
 
 func GetArticlesByReceptionDate(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    receptionDate := vars["reception_date"]
+	vars := mux.Vars(r)
+	receptionDate := vars["reception_date"]
 
-    query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE reception_date = $1`
-    rows, err := db.DB.Query(query, receptionDate)
-    if err != nil {
-        log.Printf("Error al ejecutar la consulta: %v\n", err)
-        http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE reception_date = $1`
+	rows, err := db.DB.Query(query, receptionDate)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    articles := []models.Article{}
-    for rows.Next() {
-        var article models.Article
-        if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
-            log.Printf("Error al escanear los artículos: %v\n", err)
-            http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
-            return
-        }
-        articles = append(articles, article)
-    }
+	articles := []models.Article{}
+	for rows.Next() {
+		var article models.Article
+		if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
+			log.Printf("Error al escanear los artículos: %v\n", err)
+			http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
+			return
+		}
+		articles = append(articles, article)
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(articles)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(articles)
 }
 
 func GetArticlesByStatus(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    status := vars["status"]
+	vars := mux.Vars(r)
+	status := vars["status"]
 
-    query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE status = $1`
-    rows, err := db.DB.Query(query, status)
-    if err != nil {
-        log.Printf("Error al ejecutar la consulta: %v\n", err)
-        http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	query := `SELECT article_id, title, type, reception_date, status FROM "Articles" WHERE status = $1`
+	rows, err := db.DB.Query(query, status)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al obtener los artículos", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    articles := []models.Article{}
-    for rows.Next() {
-        var article models.Article
-        if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
-            log.Printf("Error al escanear los artículos: %v\n", err)
-            http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
-            return
-        }
-        articles = append(articles, article)
-    }
+	articles := []models.Article{}
+	for rows.Next() {
+		var article models.Article
+		if err := rows.Scan(&article.ArticleID, &article.Title, &article.Type, &article.ReceptionDate, &article.Status); err != nil {
+			log.Printf("Error al escanear los artículos: %v\n", err)
+			http.Error(w, "Error al escanear los artículos", http.StatusInternalServerError)
+			return
+		}
+		articles = append(articles, article)
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(articles)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(articles)
 }
 
 func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
-    query := `
+	query := `
         SELECT 
             art.title AS "Nombre",
             CONCAT(pe.first_name, ' ', pe.first_surname, ', ', pe.second_surname) AS "Autor",
@@ -174,55 +176,55 @@ func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
             "Journals" j ON taj.journal_id = j.journal_id;
     `
 
-    rows, err := db.DB.Query(query)
-    if err != nil {
-        log.Printf("Error al ejecutar la consulta: %v\n", err)
-        http.Error(w, "Error al obtener la información", http.StatusInternalServerError)
-        return
-    }
-    defer rows.Close()
+	rows, err := db.DB.Query(query)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al obtener la información", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
 
-    articles := []map[string]interface{}{}
-    for rows.Next() {
-        var nombre, autor, tipo, ejemplar, estado, autorPlano, ejemplarPlano, anotaciones, numeracion, articuloOriginal string
-        var antiguedad int
-        var fechaRecepcion sql.NullTime
+	articles := []map[string]interface{}{}
+	for rows.Next() {
+		var nombre, autor, tipo, ejemplar, estado, autorPlano, ejemplarPlano, anotaciones, numeracion, articuloOriginal string
+		var antiguedad int
+		var fechaRecepcion sql.NullTime
 
-        if err := rows.Scan(
-            &nombre,
-            &autor,
-            &tipo,
-            &antiguedad,
-            &fechaRecepcion,
-            &ejemplar,
-            &estado,
-            &autorPlano,
-            &ejemplarPlano,
-            &anotaciones,
-            &numeracion,
-            &articuloOriginal,
-        ); err != nil {
-            log.Printf("Error al escanear los datos: %v\n", err)
-            http.Error(w, "Error al procesar los datos", http.StatusInternalServerError)
-            return
-        }
+		if err := rows.Scan(
+			&nombre,
+			&autor,
+			&tipo,
+			&antiguedad,
+			&fechaRecepcion,
+			&ejemplar,
+			&estado,
+			&autorPlano,
+			&ejemplarPlano,
+			&anotaciones,
+			&numeracion,
+			&articuloOriginal,
+		); err != nil {
+			log.Printf("Error al escanear los datos: %v\n", err)
+			http.Error(w, "Error al procesar los datos", http.StatusInternalServerError)
+			return
+		}
 
-        articles = append(articles, map[string]interface{}{
-            "Nombre":            nombre,
-            "Autor":             autor,
-            "Tipo":              tipo,
-            "Antigüedad":        antiguedad,
-            "Fecha de recepción": fechaRecepcion.Time,
-            "Ejemplar":          ejemplar,
-            "Estado":            estado,
-            "Autor Plano":       autorPlano,
-            "Ejemplar Plano":    ejemplarPlano,
-            "Anotaciones":       anotaciones,
-            "Numeración":        numeracion,
-            "Artículo original": articuloOriginal,
-        })
-    }
+		articles = append(articles, map[string]interface{}{
+			"Nombre":             nombre,
+			"Autor":              autor,
+			"Tipo":               tipo,
+			"Antigüedad":         antiguedad,
+			"Fecha de recepción": fechaRecepcion.Time,
+			"Ejemplar":           ejemplar,
+			"Estado":             estado,
+			"Autor Plano":        autorPlano,
+			"Ejemplar Plano":     ejemplarPlano,
+			"Anotaciones":        anotaciones,
+			"Numeración":         numeracion,
+			"Artículo original":  articuloOriginal,
+		})
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(articles)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(articles)
 }

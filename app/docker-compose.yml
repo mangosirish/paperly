@@ -8,11 +8,9 @@ services:
       - "8080:8080"
     volumes:
       - ./:/app
-      - air_config:/root/.air.toml
     environment:
       - GO111MODULE=on
-      - AIR_WATCH_DELAY=1000ms
-      - AIR_TMP_DIR=/app/tmp
-
+    networks:
+      - paperly-network
 volumes:
   air_config:

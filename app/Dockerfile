@@ -1,18 +1,19 @@
-# Dockerfile
-FROM golang:1.21
+FROM golang:1.23-alpine
 
-# Set working directory
+# Define el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copy Go module files and download dependencies
+# Instala Air, una herramienta para recarga en caliente durante el desarrollo
+RUN go install github.com/air-verse/air@latest
+
+# Copia los archivos de dependencias y descarga los módulos
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the rest of the application code
+# Copia el resto del código de la aplicación
 COPY . .
 
-# Set PATH for Air binary
+# Establece el PATH para incluir los binarios de Go (incluyendo el de Air)
 ENV PATH="/go/bin:${PATH}"
 
-# Default command to run Air
-CMD ["air"]
+CMD [ "air" ]
