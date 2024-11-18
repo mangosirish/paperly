@@ -1,9 +1,19 @@
 package components
 
 templ CreateItemForm(requested_table string) {
-	<div class="form-create" x-show="open_form_create" x-transition @keydown.escape.window="confirmClose()" @click.away="confirmClose()">
+	<div
+		class="form-create"
+		x-show="open_form_create"
+		x-transition
+		@keydown.escape.window="confirmClose(); restoreProfileCounter()"
+		@click.away="confirmClose(); restoreProfileCounter()"
+		hx-get={ "/web/form/" + requested_table }
+		hx-swap="outerHTML"
+		hx-trigger="click from:#form_btn"
+		hx-target=".form-create"
+	>
 		<div class="form-content" @click.stop>
-			<span class="close" x-on:click="confirmClose()">&times;</span>
+			<span class="close" x-on:click="confirmClose(); restoreProfileCounter()">&times;</span>
 			<h2>Create { requested_table }</h2>
 			<div class="form-scrollable">
 				<!-- Aquí se selecciona el formulario correspondiente según la tabla solicitada -->
@@ -22,37 +32,122 @@ templ CreateItemForm(requested_table string) {
 			</div>
 		</div>
 	</div>
-	<script>
-    function createFormHandler() {
-        return {
-            open_form_create: false,
-            confirmClose() {
-                if (confirm("¿Realmente desea salir sin guardar?")) {
-                    this.open_form_create = false;
-                }
-            }
-        };
-    }
-	</script>
 }
 
 templ FormArticles() {
-	<form action="/create_article" method="POST">
-		<label for="title">Título del artículo:</label>
-		<input type="text" id="title" name="title" placeholder="Título del artículo" required/>
-		<label for="type">Tipo de artículo:</label>
-		<input type="text" id="type" name="type" placeholder="Tipo de artículo" required/>
-		<label for="reception_date">Fecha de recepción:</label>
-		<input type="date" id="reception_date" name="reception_date" required/>
-		<label for="status">Estado:</label>
-		<input type="text" id="status" name="status" placeholder="Estado del artículo" required/>
+	<form
+		action="/create_article"
+		method="POST"
+		x-data="{
+        article_id: 0,
+        title: '',
+        type: '',
+        reception_date: '',
+        status: '',
+        author_id: 0,
+        journal_id: 0,
+        show_search_results_author: false,
+        show_search_results_journal: false,
+        searchQueryAuthor: '',
+        searchQueryJournal: '',
+        setCreationMode(){
+            this.show_search_results_author = false;
+            this.show_search_results_journal = false;
+            this.author_id = 0;
+            this.journal_id = 0;
+            this.title = '';
+            this.type = '';
+            this.reception_date = '';
+            this.status = '';
+        },
+		setResultAuthor(author) {
+            this.author_id = author.person_id;
+            this.first_name = author.first_name;
+            this.middle_name = author.middle_name;
+            this.first_surname = author.first_surname;
+            this.second_surname = author.second_surname;
+            this.personal_email = author.personal_email;
+            this.institutional_email = author.institutional_email;
+            this.show_search_results_author = false;
+        },
+        setResultModeJournal(journal) {
+            this.journal_id = journal.journal_id;
+            this.show_search_results_journal = false;
+        }
+    }"
+	>
+		<!-- Título del Artículo -->
+		<input type="text" id="title" name="title" placeholder="Título del artículo" required x-model="title"/>
+		<!-- Tipo del Artículo -->
+		<input type="text" id="type" name="type" placeholder="Tipo de Artículo" required x-model="type"/>
+		<!-- Fecha de Recepción -->
+		<input type="date" id="reception_date" name="reception_date" placeholder="Fecha de recepción" required x-model="reception_date"/>
+		<!-- Estado del Artículo -->
+		<input type="text" id="status" name="status" placeholder="Estado del artículo" required x-model="status"/>
+		<!-- Buscar o Crear Autor -->
+		<label for="search_bar_author">Buscar autor</label>
+		<input id="author_id" type="text"  style="display: none;" x-model="author_id"/>
+		<input
+			type="search"
+			id="search_bar_author"
+			name="search_bar_author"
+			x-model="searchQueryAuthor"
+			x-on:input="searchAuthors(searchQueryAuthor)"
+			x-on:click="searchAuthors(searchQueryAuthor)"
+			x-on:focus="show_search_results_author = true"
+		/>
+		<div
+			id="author_autocomplete_menu"
+			x-show="show_search_results_author"
+			x-transition
+			@mousedown.outside="show_search_results_author = false"
+		>
+			<ul id="author_search_results"></ul>
+		</div>
+		<!-- Información del Autor Seleccionado -->
+		<div class="author-info" x-show="author_id">
+			<h3>Información del Autor Seleccionado</h3>
+			<label>Nombre:</label>
+			<input type="text" x-model="first_name" readonly/>
+			<label>Segundo Nombre:</label>
+			<input type="text" x-model="middle_name" readonly/>
+			<label>Primer Apellido:</label>
+			<input type="text" x-model="first_surname" readonly/>
+			<label>Segundo Apellido:</label>
+			<input type="text" x-model="second_surname" readonly/>
+			<label>Email Personal:</label>
+			<input type="email" x-model="personal_email" readonly/>
+			<label>Email Institucional:</label>
+			<input type="email" x-model="institutional_email" readonly/>
+		</div>
+		<!-- Buscar o Crear Journal -->
+		<input id="journal_id" type="text" style="display: none;" x-model="journal_id"/>
+		<label for="search_bar_journal">Buscar Revista</label>
+		<input
+			type="search"
+			id="search_bar_journal"
+			name="search_bar_journal"
+			x-model="searchQueryJournal"
+			x-on:input="searchJournals(searchQueryJournal)"
+			x-on:click="searchJournals(searchQueryJournal)"
+			x-on:focus="show_search_results_journal = true"
+		/>
+		<div
+			id="journal_autocomplete_menu"
+			x-show="show_search_results_journal"
+			x-transition
+			@mousedown.outside="show_search_results_journal = false"
+		>
+			<ul id="journal_search_results"></ul>
+		</div>
+		<!-- Botón de envío -->
 		<button type="submit">Crear Artículo</button>
 	</form>
 }
 
 templ FormAuthors() {
 	<form
-		action="/create_article"
+		action="/create_author"
 		method="POST"
 		x-data="{
 		person_id: 0,
@@ -91,7 +186,7 @@ templ FormAuthors() {
         
     }"
 	>
-		<input type="text" id="PID" x-show="false" x-model="{person_id}"/>
+		<input type="text" id="PID" x-model="{person_id}" style="display: none;"/>
 		<label for="search_bar_author">Buscar una persona ya existente</label>
 		<input
 			type="search"
@@ -133,142 +228,146 @@ templ FormAuthors() {
 		<br/>
 		<button type="submit">Crear Artículo</button>
 	</form>
-	<script>
-	
-    let profileCounter = 0; // Contador de perfiles académicos
-
-    function addAcademicProfile() {
-        profileCounter++;
-        const profileContainer = document.getElementById("profileContainer");
-
-        // Crear un nuevo contenedor de perfil académico
-        const newProfile = document.createElement("div");
-        newProfile.className = "profile-container";
-        newProfile.id = `profile-${profileCounter}`;
-        newProfile.style.marginBottom = "1em";
-
-        // Contenido del nuevo perfil
-        newProfile.innerHTML = `
-			<br/>
-            <h4>Perfil Académico Extra</h4>
-            <input type="text" name="profiles[${profileCounter}][institution]" placeholder="Institución" required>
-			<br/>
-
-            <input type="text" name="profiles[${profileCounter}][faculty]" placeholder="Facultad" required>
-			<br/>
-
-            <input type="text" name="profiles[${profileCounter}][career]" placeholder="Carrera" required>
-			<br/>
-
-            <input type="text" name="profiles[${profileCounter}][specialization]" placeholder="Especialidad">
-			<br/>
-
-            <button type="button" onclick="removeAcademicProfile(${profileCounter})">Eliminar Perfil</button>
-			<br/>
-        `;
-
-        profileContainer.appendChild(newProfile);
-    }
-
-    function removeAcademicProfile(id) {
-        const profile = document.getElementById(`profile-${id}`);
-        if (profile) {
-            profile.remove();
-        }
-    }
-
-	function searchPeople(searchQuery) {
-            this.debounceTimer = setTimeout(() => {
-                apiRoute = searchQuery.trim() !== '' ? `/people/first_name/${searchQuery}` : '/people'
-                    fetch(apiRoute)
-                        .then(response => response.json())
-                        .then(data => {
-                            const ulElement = document.getElementById('search_results');
-                            ulElement.innerHTML = '';
-							const defaultLi = document.createElement('li')
-							defaultLi.textContent = 'Crear un nuevo perfil personal +'
-							defaultLi.setAttribute('x-on:click', 'setCreationMode()')
-							ulElement.appendChild(defaultLi)
-
-                            data.forEach(person => {
-                                const li = document.createElement('li');
-                                li.textContent = person.first_name;
-								li.setAttribute('x-on:click', `setResultMode();
-								first_name='${person.first_name}'; 
-								second_name='${person.middle_name}'; 
-								first_surname='${person.first_surname}'; 
-								last_surname='${person.second_surname}'; 
-								email_pers='${person.personal_email}'; 
-								email_inst='${person.institutional_email}';
-								person_id='${person.person_id}' `)
-                                ulElement.appendChild(li);
-                            });
-                            this.show_search_results = true;
-                        })
-                        .catch(error => {
-                            console.error('Error al hacer la solicitud:', error);
-                        });
-            }, 500); 
-	}
-	</script>
 }
 
 templ FormJournals() {
-	<form action="/create_journal" method="POST">
-		<label for="status">Estado:</label>
-		<input type="text" id="status" name="status" placeholder="Estado del número" required/>
-		<label for="age">Antigüedad (años):</label>
-		<input type="number" id="age" name="age" placeholder="Años de antigüedad" required/>
-		<label for="publication_date">Fecha de publicación:</label>
-		<input type="date" id="publication_date" name="publication_date" required/>
-		<label for="start_month_period">Mes de inicio del periodo:</label>
-		<input type="text" id="start_month_period" name="start_month_period" placeholder="Mes de inicio" required/>
-		<label for="end_month_period">Mes de término del periodo:</label>
-		<input type="text" id="end_month_period" name="end_month_period" placeholder="Mes de término" required/>
-		<label for="number">Número del ejemplar:</label>
-		<input type="number" id="number" name="number" placeholder="Número del ejemplar" required/>
-		<label for="volume_number">Número de volumen:</label>
-		<input type="number" id="volume_number" name="volume_number" placeholder="Número de volumen" required/>
-		<label for="edition_number">Número de edición:</label>
-		<input type="number" id="edition_number" name="edition_number" required/>
-		<label for="special_number">Número especial (si aplica):</label>
-		<input type="number" id="special_number" name="special_number"/>
-		<label for="online_link">Enlace en línea:</label>
-		<input type="url" id="online_link" name="online_link" placeholder="URL del ejemplar"/>
-		<label for="reserve_number">Número de reserva:</label>
-		<input type="text" id="reserve_number" name="reserve_number" placeholder="Número de reserva"/>
-		<button type="submit">Crear Número</button>
+	<form
+		action="/create_journal"
+		method="POST"
+		x-data="{
+            journal_id: 0,
+            status: '',
+            age: '',
+            publication_date: '',
+            start_month_period: '',
+            end_month_period: '',
+            number: '',
+            volume_number: '',
+            edition_number: '',
+            special_number: '',
+            online_link: '',
+            reserve_number: '',
+        }"
+	>
+		<!-- Campos de Revista -->
+		<h3>Información de la Revista</h3>
+		<!-- Estado de la revista -->
+		<input type="text" id="status" name="status" placeholder="Estado" required x-model="status"/>
+		<!-- Año de antigüedad -->
+		<input type="number" id="age" name="age" placeholder="Año de antigüedad" required x-model="age"/>
+		<!-- Fecha de publicación -->
+		<input type="date" id="publication_date" name="publication_date" placeholder="Fecha de publicación" required x-model="publication_date"/>
+		<!-- Periodo de publicación -->
+		<label for="start_month_period">Mes de inicio</label>
+		<input type="text" id="start_month_period" name="start_month_period" placeholder="Mes de inicio" required x-model="start_month_period"/>
+		<label for="end_month_period">Mes de finalización</label>
+		<input type="text" id="end_month_period" name="end_month_period" placeholder="Mes de finalización" required x-model="end_month_period"/>
+		<!-- Número de la revista -->
+		<input type="number" id="number" name="number" placeholder="Número" required x-model="number"/>
+		<!-- Volumen de la revista -->
+		<input type="number" id="volume_number" name="volume_number" placeholder="Volumen" required x-model="volume_number"/>
+		<!-- Edición de la revista -->
+		<input type="number" id="edition_number" name="edition_number" placeholder="Edición" required x-model="edition_number"/>
+		<!-- Número especial -->
+		<input type="number" id="special_number" name="special_number" placeholder="Número especial" x-model="special_number"/>
+		<!-- Enlace web -->
+		<input type="url" id="online_link" name="online_link" placeholder="Enlace web" x-model="online_link"/>
+		<!-- Número de reserva -->
+		<input type="text" id="reserve_number" name="reserve_number" placeholder="Número de reserva" required x-model="reserve_number"/>
+		<!-- Botón de envío -->
+		<br/>
+		<br/>
+		<button type="submit">Crear Revista</button>
 	</form>
 }
 
 templ FormSocialService() {
-	<form action="/create_student_service" method="POST">
-		<label for="person_id">ID de persona:</label>
-		<input type="number" id="person_id" name="person_id" placeholder="ID de la persona (estudiante)" required/>
-		<label for="start_date">Fecha de inicio:</label>
-		<input type="date" id="start_date" name="start_date" required/>
-		<label for="end_date">Fecha de término:</label>
-		<input type="date" id="end_date" name="end_date" required/>
-		<label for="documentation">Documentación:</label>
-		<textarea id="documentation" name="documentation" placeholder="Documentación adicional"></textarea>
-		<label for="status">Estado del servicio social:</label>
-		<input type="text" id="status" name="status" placeholder="Estado" required/>
-		<label for="division">División:</label>
-		<input type="text" id="division" name="division" placeholder="División del servicio social" required/>
-		<label for="institution">Institución:</label>
-		<input type="text" id="institution" name="institution" placeholder="Institución del servicio social" required/>
-		<fieldset>
-			<legend>Documentación presentada:</legend>
-			<label><input type="checkbox" name="is_enrollment_request_submitted"/> Solicitud de inscripción</label>
-			<label><input type="checkbox" name="is_presentation_letter_submitted"/> Carta de presentación</label>
-			<label><input type="checkbox" name="is_acceptance_letter_submitted"/> Carta de aceptación</label>
-			<label><input type="checkbox" name="is_advisor_appointment_submitted"/> Nombramiento de asesor</label>
-			<label><input type="checkbox" name="is_commitment_letter_submitted"/> Carta de compromiso</label>
-			<label><input type="checkbox" name="is_intermediate_report_submitted"/> Informe intermedio</label>
-			<label><input type="checkbox" name="is_intermediate_report_validation_submitted"/> Validación del informe intermedio</label>
-			<label><input type="checkbox" name="is_final_report_submitted"/> Informe final</label>
-			<label><input type="checkbox" name="is_completion_letter_submitted"/> Carta de terminación</label>
-		</fieldset>
-		<button type="submit">Crear Servicio Social</button>
+	<form
+		action="/create_article"
+		method="POST"
+		x-data="{
+            person_id: 0,
+            first_name: '',
+            second_name: '',
+            first_surname: '',
+            last_surname: '',
+            email_pers: '',
+            email_inst: '',
+            show_fields: false,
+            show_search_results: false,
+            creation_mode: true,
+            searchQuery: '',
+            debounceTimer: null,
+
+            setCreationMode(){
+                this.creation_mode = true;
+                this.show_fields = true;
+                this.first_name= '';
+                this.second_name= '';
+                this.first_surname = '';
+                this.last_surname = '';
+                this.email_pers = '';
+                this.email_inst = '';
+                this.show_search_results = false;
+                this.person_id = 0;
+            },
+
+            setResultMode(){
+                this.show_fields = true;
+                console.log('Hi');
+                this.creation_mode = false;
+                this.show_search_results = false;
+            }
+        }"
+	>
+		<input type="text" id="PID" x-show="false" x-model="person_id"/>
+		<!-- Buscar persona existente o crear una nueva -->
+		<label for="search_bar_author">Buscar una persona ya existente</label>
+		<input
+			type="search"
+			id="search_bar_author"
+			name="search_bar_author"
+			x-model="searchQuery"
+			x-on:input="searchPeople(searchQuery)"
+			x-on:click="searchPeople(searchQuery)"
+			x-on:focus="show_search_results = true"
+		/>
+		<div
+			id="autocomplete-menu"
+			x-show="show_search_results"
+			x-transition
+			@mousedown.outside="show_search_results = false"
+		>
+			<ul id="search_results">
+				<li x-on:click="setCreationMode()">Crear un nuevo perfil personal +</li>
+			</ul>
+		</div>
+		<!-- Información Personal -->
+		<input type="text" id="first_name" name="first_name" placeholder="Primer Nombre" required x-show="show_fields" x-transition :readonly="!creation_mode" x-model="first_name"/>
+		<input type="text" id="second_name" name="second_name" placeholder="Segundo Nombre" x-show="show_fields" x-transition :readonly="!creation_mode" x-model="second_name"/>
+		<input type="text" id="first_lastname" name="first_lastname" placeholder="Primer Apellido" required x-show="show_fields" x-transition :readonly="!creation_mode" x-model="first_surname"/>
+		<input type="text" id="second_lastname" name="second_lastname" placeholder="Segundo Apellido" x-show="show_fields" x-transition :readonly="!creation_mode" x-model="last_surname"/>
+		<input type="email" id="personal_email" name="personal_email" placeholder="E-mail Personal" required x-show="show_fields" x-transition :readonly="!creation_mode" x-model="email_pers"/>
+		<input type="email" id="institutional_email" name="institutional_email" placeholder="E-mail Institucional" required x-show="show_fields" x-transition :readonly="!creation_mode" x-model="email_inst"/>
+		<!-- Campos de Servicio Social -->
+		<h3>Servicio Social</h3>
+		<input type="date" id="start_date" name="start_date" placeholder="Fecha de Inicio" required/>
+		<input type="date" id="end_date" name="end_date" placeholder="Fecha de Finalización" required/>
+		<input type="text" id="documentation" name="documentation" placeholder="Notas"/>
+		<input type="text" id="status" name="status" placeholder="Estatus"/>
+		<input type="text" id="division" name="division" placeholder="División"/>
+		<input type="text" id="institution" name="institution" placeholder="Institución" required/>
+		<!-- Campos de Inscripción y Documentación -->
+		<label><input type="checkbox" name="is_enrollment_request_submitted"/> Solicitud de inscripción enviada</label>
+		<label><input type="checkbox" name="is_presentation_letter_submitted"/> Carta de presentación enviada</label>
+		<label><input type="checkbox" name="is_acceptance_letter_submitted"/> Carta de aceptación enviada</label>
+		<label><input type="checkbox" name="is_advisor_appointment_submitted"/> Carta compromiso enviada</label>
+		<label><input type="checkbox" name="is_commitment_letter_submitted"/> Reporte intermedio enviado</label>
+		<label><input type="checkbox" name="is_intermediate_report_submitted"/> Reporte intermedio validado</label>
+		<label><input type="checkbox" name="is_final_report_submitted"/> Reporte final enviado</label>
+		<label><input type="checkbox" name="is_completion_letter_submitted"/> Carta de conclusión</label>
+		<br/>
+		<br/>
+		<button type="submit">Crear Artículo</button>
 	</form>
 }

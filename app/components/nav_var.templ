@@ -11,7 +11,7 @@ templ NavBar() {
 				hx-get="/web/container/authors"
 				hx-target={ nav_target }
 				hx-swap="outerHTML transition:true"
-				hx-replace-url="/web/authors" 
+				hx-replace-url="/web/authors"
 			>Autores</li>
 			<li
 				:class="{ 'active': activeTab === 'articles' }"
@@ -19,7 +19,7 @@ templ NavBar() {
 				hx-get="/web/container/articles"
 				hx-target={ nav_target }
 				hx-swap="outerHTML transition:true"
-				hx-replace-url="/web/articles" 
+				hx-replace-url="/web/articles"
 			>Articulos</li>
 			<li
 				:class="{ 'active': activeTab === 'social-service' }"
@@ -27,7 +27,7 @@ templ NavBar() {
 				hx-get="/web/container/social-service"
 				hx-target={ nav_target }
 				hx-swap="outerHTML transition:true"
-				hx-replace-url="/web/social-service" 
+				hx-replace-url="/web/social-service"
 			>Servicio Social</li>
 			<li
 				:class="{ 'active': activeTab === 'journals' }"
@@ -35,8 +35,9 @@ templ NavBar() {
 				hx-get="/web/container/journals"
 				hx-target={ nav_target }
 				hx-swap="outerHTML transition:true"
-				hx-replace-url="/web/journals" 
+				hx-replace-url="/web/journals"
 			>Numeros</li>
 		</ul>
 	</nav>
+	<script src="/static/js/forms_logic.js"/>
 }

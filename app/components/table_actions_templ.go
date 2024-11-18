@@ -26,7 +26,7 @@ func TableActions() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"table-actions\"><div class=\"no-selection\" x-show=\"action === 0\"><button class=\"btn\" @click=\"open_form_create= true\">+ New</button> <button class=\"btn\" @click=\"action = 1\">Quick edit</button> <button class=\"btn\" @click=\"action = 2\">Share</button> <button class=\"btn\">Export to Excel</button></div><div class=\"one-selected\" x-show=\"action === 1\">one selected</div><div class=\"many-selected\" x-show=\"action === 2\">no selected</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"table-actions\"><div class=\"no-selection\" x-show=\"action === 0\"><button id=\"form_btn\" class=\"btn\" @click=\"open_form_create= true\">+ New</button> <button class=\"btn\" @click=\"action = 1\">Quick edit</button> <button class=\"btn\" @click=\"action = 2\">Share</button> <button class=\"btn\">Export to Excel</button></div><div class=\"one-selected\" x-show=\"action === 1\">one selected</div><div class=\"many-selected\" x-show=\"action === 2\">no selected</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

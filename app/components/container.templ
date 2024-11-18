@@ -12,17 +12,16 @@ templ Container(requested_table string) {
 			} "
 	>
 		@TableActions()
-		
 		<!-- Modal Form-->
 		<div
-			class="form-create"
+			class="form-container"
 			x-show="open_form_create"
 			hx-get={ "/web/form/" + requested_table }
 			hx-swap="outerHTML"
-			hx-trigger="load"
-			hx-target=".form-create"
+			hx-trigger="click from:#form_btn"
+			hx-target=".form-container"
 		>
-			<div class="spinner"></div>
+			<div class="spinner" id="spinneid"></div>
 		</div>
 		<div
 			class="table-container"
