@@ -86,7 +86,7 @@ templ FormArticles() {
 		<input type="text" id="status" name="status" placeholder="Estado del artículo" required x-model="status"/>
 		<!-- Buscar o Crear Autor -->
 		<label for="search_bar_author">Buscar autor</label>
-		<input id="author_id" type="text"  style="display: none;" x-model="author_id"/>
+		<input name="used_author_id" style="display: none;" x-model="author_id"/>
 		<input
 			type="search"
 			id="search_bar_author"
@@ -121,7 +121,6 @@ templ FormArticles() {
 			<input type="email" x-model="institutional_email" readonly/>
 		</div>
 		<!-- Buscar o Crear Journal -->
-		<input id="journal_id" type="text" style="display: none;" x-model="journal_id"/>
 		<label for="search_bar_journal">Buscar Revista</label>
 		<input
 			type="search"
@@ -132,6 +131,7 @@ templ FormArticles() {
 			x-on:click="searchJournals(searchQueryJournal)"
 			x-on:focus="show_search_results_journal = true"
 		/>
+		<input name="used_journal_id" style="display: none;" x-model="journal_id"/>
 		<div
 			id="journal_autocomplete_menu"
 			x-show="show_search_results_journal"
@@ -178,15 +178,12 @@ templ FormAuthors() {
 
 		setResultMode(){
 			this.show_fields = true
-			console.log('Hi')
 			this.creation_mode = false
 			this.show_search_results = false
 		}
-
         
     }"
 	>
-		<input type="text" id="PID" x-model="{person_id}" style="display: none;"/>
 		<label for="search_bar_author">Buscar una persona ya existente</label>
 		<input
 			type="search"
@@ -207,6 +204,7 @@ templ FormAuthors() {
 				<li x-on:click="setCreationMode()">Crear un nuevo perfil personal +</li>
 			</ul>
 		</div>
+		<input style="display: none;" name="used_pers_id" x-model="person_id"/>
 		<!-- Información personal -->
 		<input type="text" id="first_name" name="first_name" placeholder="Primer Nombre" required x-show="show_fields" x-transition :readonly="!creation_mode" x-model="first_name"/>
 		<input type="text" id="second_name" name="second_name" placeholder="Segundo Nombre" x-show="show_fields" x-transition :readonly="!creation_mode" x-model="second_name"/>
@@ -218,10 +216,13 @@ templ FormAuthors() {
 		<br/>
 		<h3>Perfiles Académicos</h3>
 		<!-- Botón para añadir un nuevo perfil académico -->
-		<input type="text" name="profiles[${profileCounter}][institution]" placeholder="Institución" required/>
-		<input type="text" name="profiles[${profileCounter}][faculty]" placeholder="Facultad" required/>
-		<input type="text" name="profiles[${profileCounter}][career]" placeholder="Carrera" required/>
-		<input type="text" name="profiles[${profileCounter}][specialization]" placeholder="Especialidad"/>
+		<input type="text" name="profiles[0][institution]" placeholder="Institución" required/>
+		<!---->
+		<input type="text" name="profiles[0][faculty]" placeholder="Facultad" required/>
+		<!---->
+		<input type="text" name="profiles[0][career]" placeholder="Carrera" required/>
+		<!---->
+		<input type="text" name="profiles[0][specialization]" placeholder="Especialidad"/>
 		<div id="profileContainer"></div>
 		<button type="button" onclick="addAcademicProfile()">Agregar Otro Perfil Académico</button>
 		<br/>
@@ -283,7 +284,7 @@ templ FormJournals() {
 
 templ FormSocialService() {
 	<form
-		action="/create_article"
+		action="/create_social_service"
 		method="POST"
 		x-data="{
             person_id: 0,
@@ -320,7 +321,7 @@ templ FormSocialService() {
             }
         }"
 	>
-		<input type="text" id="PID" x-show="false" x-model="person_id"/>
+		<input style="display: none;" name="used_person_id" x-model="person_id"/>
 		<!-- Buscar persona existente o crear una nueva -->
 		<label for="search_bar_author">Buscar una persona ya existente</label>
 		<input
