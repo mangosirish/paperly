@@ -68,12 +68,15 @@ func main() {
 	router.HandleFunc("/people/institutional_email/{institutional_email}", handlers.GetPeopleByInstitutionalEmail).Methods("GET")
 
 	router.HandleFunc("/authors", handlers.GetAuthors).Methods("GET")
+	router.HandleFunc("/authors/search/{query}", handlers.SearchAuthors).Methods("GET")
 	router.HandleFunc("/authors/notes/{notes}", handlers.GetAuthorsByNotes).Methods("GET")
 	router.HandleFunc("/authors/person-id/{person_id}", handlers.GetAuthorsByPersonID).Methods("GET")
 	router.HandleFunc("/authors/details", handlers.GetJoinedAuthorInfo).Methods("GET")
 
 	router.HandleFunc("/academic-careers", handlers.GetAcademicCareers).Methods("GET")
 	router.HandleFunc("/academic-careers/name/{name}", handlers.GetAcademicCareersByName).Methods("GET")
+
+	router.HandleFunc("/academic-profiles/search/{query}", handlers.SearchAcademicProfiles).Methods("GET")
 
 	router.HandleFunc("/faculties", handlers.GetFaculties).Methods("GET")
 	router.HandleFunc("/faculties/name/{name}", handlers.GetFacultiesByName).Methods("GET")
@@ -101,6 +104,7 @@ func main() {
 	router.HandleFunc("/student-social-services/details", handlers.GetStudentSocialServiceDetails).Methods("GET")
 
 	router.HandleFunc("/journals", handlers.GetJournals).Methods("GET")
+	router.HandleFunc("/journals/search/{query}", handlers.SearchJournals).Methods("GET")
 	router.HandleFunc("/journals/status/{status}", handlers.GetJournalsByStatus).Methods("GET")
 	router.HandleFunc("/journals/age/{age}", handlers.GetJournalsByAge).Methods("GET")
 	router.HandleFunc("/journals/publication_date/{publication_date}", handlers.GetJournalsByPublicationDate).Methods("GET")

@@ -39,6 +39,57 @@ func GetJournals(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(journals)
 }
 
+func SearchJournals(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	queryParam := vars["query"]
+
+	if queryParam == "" {
+		http.Error(w, "Parámetro de búsqueda 'query' requerido", http.StatusBadRequest)
+		return
+	}
+
+	query := `
+        SELECT journal_id, status, age, publication_date, start_month_period, end_month_period, 
+               number, volume_number, edition_number, special_number, online_link, reserve_number
+        FROM "Journals"
+        WHERE status ILIKE '%' || $1 || '%'
+           OR CAST(age AS TEXT) ILIKE '%' || $1 || '%'
+           OR publication_date ILIKE '%' || $1 || '%'
+           OR start_month_period ILIKE '%' || $1 || '%'
+           OR end_month_period ILIKE '%' || $1 || '%'
+           OR CAST(number AS TEXT) ILIKE '%' || $1 || '%'
+           OR CAST(volume_number AS TEXT) ILIKE '%' || $1 || '%'
+           OR CAST(edition_number AS TEXT) ILIKE '%' || $1 || '%'
+           OR CAST(special_number AS TEXT) ILIKE '%' || $1 || '%'
+           OR online_link ILIKE '%' || $1 || '%'
+           OR reserve_number ILIKE '%' || $1 || '%'
+    `
+
+	rows, err := db.DB.Query(query, queryParam)
+	if err != nil {
+		log.Printf("Error al ejecutar la consulta: %v\n", err)
+		http.Error(w, "Error al buscar los journals", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	journals := []models.Journal{}
+	for rows.Next() {
+		var journal models.Journal
+		if err := rows.Scan(&journal.JournalID, &journal.Status, &journal.Age, &journal.PublicationDate, 
+			&journal.StartMonthPeriod, &journal.EndMonthPeriod, &journal.Number, &journal.VolumeNumber, 
+			&journal.EditionNumber, &journal.SpecialNumber, &journal.OnlineLink, &journal.ReserveNumber); err != nil {
+			log.Printf("Error al escanear los journals: %v\n", err)
+			http.Error(w, "Error al escanear los journals", http.StatusInternalServerError)
+			return
+		}
+		journals = append(journals, journal)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(journals)
+}
+
 func GetJournalsByStatus(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	status := vars["status"]
