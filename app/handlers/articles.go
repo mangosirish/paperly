@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mangosirish/paperly/components"
 	"github.com/mangosirish/paperly/db"
 	"github.com/mangosirish/paperly/models"
 )
@@ -147,40 +148,39 @@ func GetArticlesByStatus(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(articles)
 }
 
-func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
+func FetchJoinedArticleInfo(db *sql.DB) ([]map[string]interface{}, error) {
 	query := `
-        SELECT 
-            art.title AS "Nombre",
-            CONCAT(pe.first_name, ' ', pe.first_surname, ', ', pe.second_surname) AS "Autor",
-            art.type AS "Tipo",
-            EXTRACT(YEAR FROM AGE(CURRENT_DATE, art.reception_date)) AS "Antigüedad",
-            art.reception_date AS "Fecha de recepción",
-            CONCAT('Año ', j.age, ', vol. ', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', j.publication_date) AS "Ejemplar",
-            art.status AS "Estado",
-            CONCAT(pe.first_name, ' ', pe.first_surname) AS "Autor Plano",
-            j.online_link AS "Ejemplar Plano",
-            a.notes AS "Anotaciones",
-            CONCAT('Volumen ', j.volume_number, ', Número ', j.number) AS "Numeración",
-            art.title AS "Artículo original"
-        FROM 
-            "Articles" art
-        JOIN 
-            "TransitiveArticleAuthors" taa ON art.article_id = taa.article_id
-        JOIN 
-            "Authors" a ON taa.author_id = a.author_id
-        JOIN 
-            "People" pe ON a.person_id = pe.person_id
-        JOIN 
-            "TransitiveArticleJournals" taj ON art.article_id = taj.article_id
-        JOIN 
-            "Journals" j ON taj.journal_id = j.journal_id;
-    `
+	SELECT 
+		art.title AS "Nombre",
+		CONCAT(pe.first_name, ' ', pe.first_surname, ', ', pe.second_surname) AS "Autor",
+		art.type AS "Tipo",
+		EXTRACT(YEAR FROM AGE(CURRENT_DATE, art.reception_date)) AS "Antigüedad",
+		art.reception_date AS "Fecha de recepción",
+		CONCAT('Año ', j.age, ', vol. ', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', j.publication_date) AS "Ejemplar",
+		art.status AS "Estado",
+		CONCAT(pe.first_name, ' ', pe.first_surname) AS "Autor Plano",
+		j.online_link AS "Ejemplar Plano",
+		a.notes AS "Anotaciones",
+		CONCAT('Volumen ', j.volume_number, ', Número ', j.number) AS "Numeración",
+		art.title AS "Artículo original"
+	FROM 
+		"Articles" art
+	JOIN 
+		"TransitiveArticleAuthors" taa ON art.article_id = taa.article_id
+	JOIN 
+		"Authors" a ON taa.author_id = a.author_id
+	JOIN 
+		"People" pe ON a.person_id = pe.person_id
+	JOIN 
+		"TransitiveArticleJournals" taj ON art.article_id = taj.article_id
+	JOIN 
+		"Journals" j ON taj.journal_id = j.journal_id;
+	`
 
-	rows, err := db.DB.Query(query)
+	rows, err := db.Query(query)
 	if err != nil {
 		log.Printf("Error al ejecutar la consulta: %v\n", err)
-		http.Error(w, "Error al obtener la información", http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -205,8 +205,7 @@ func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
 			&articuloOriginal,
 		); err != nil {
 			log.Printf("Error al escanear los datos: %v\n", err)
-			http.Error(w, "Error al procesar los datos", http.StatusInternalServerError)
-			return
+			return nil, err
 		}
 
 		articles = append(articles, map[string]interface{}{
@@ -224,7 +223,27 @@ func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
 			"Artículo original":  articuloOriginal,
 		})
 	}
+	return articles, nil
+}
+
+func GetJoinedArticleInfo(w http.ResponseWriter, r *http.Request) {
+	articles, err := FetchJoinedAuthorInfo(db.DB)
+
+	if err != nil {
+		http.Error(w, "Error al obtener la información de la base de datos", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(articles)
+}
+
+func RenderArticlesTable(w http.ResponseWriter, r *http.Request) {
+	articles, err := FetchJoinedArticleInfo(db.DB)
+	if err != nil {
+		http.Error(w, "Error al obtener la información de la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	components.ArticlesTable(articles).Render(r.Context(), w)
 }

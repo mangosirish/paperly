@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mangosirish/paperly/components"
 	"github.com/mangosirish/paperly/db"
 	"github.com/mangosirish/paperly/models"
 )
@@ -76,8 +77,8 @@ func SearchJournals(w http.ResponseWriter, r *http.Request) {
 	journals := []models.Journal{}
 	for rows.Next() {
 		var journal models.Journal
-		if err := rows.Scan(&journal.JournalID, &journal.Status, &journal.Age, &journal.PublicationDate, 
-			&journal.StartMonthPeriod, &journal.EndMonthPeriod, &journal.Number, &journal.VolumeNumber, 
+		if err := rows.Scan(&journal.JournalID, &journal.Status, &journal.Age, &journal.PublicationDate,
+			&journal.StartMonthPeriod, &journal.EndMonthPeriod, &journal.Number, &journal.VolumeNumber,
 			&journal.EditionNumber, &journal.SpecialNumber, &journal.OnlineLink, &journal.ReserveNumber); err != nil {
 			log.Printf("Error al escanear los journals: %v\n", err)
 			http.Error(w, "Error al escanear los journals", http.StatusInternalServerError)
@@ -442,38 +443,37 @@ func GetJournalsByReserveNumber(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(journals)
 }
 
-func GetJournalsWithArticles(w http.ResponseWriter, r *http.Request) {
+func FetchJoinedJournalInfo(db *sql.DB) ([]map[string]interface{}, error) {
 	query := `
-        SELECT 
-            CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', EXTRACT(YEAR FROM j.publication_date)) AS "ID",
-            j.status AS "Estado",
-            j.age AS "Año (de antigüedad)",
-            j.volume_number AS "Volumen",
-            j.number AS "Número",
-            COALESCE(NULLIF(j.special_number, 0), 'N/A') AS "Especial",
-            CONCAT(j.start_month_period, '-', j.end_month_period) AS "Periodo",
-            EXTRACT(YEAR FROM j.publication_date) AS "Año (de publicación)",
-            CONCAT(j.edition_number, '.ª ed.') AS "Edición",
-            CONCAT('Año ', j.age, ', volumen ', j.volume_number, ', número ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', EXTRACT(YEAR FROM j.publication_date)) AS "Ejemplar (largo)",
-            CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period) AS "Ejemplar (medio)",
-            CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number) AS "Ejemplar (corto)",
-            STRING_AGG(art.title, ', ') AS "Lista de artículos",
-            j.publication_date AS "Fecha"
-        FROM 
-            Journals j
-        JOIN 
-            TransitiveArticleJournals taj ON j.journal_id = taj.journal_id
-        JOIN 
-            Articles art ON taj.article_id = art.article_id
-        GROUP BY 
-            "ID", "Estado", "Año (de antigüedad)", "Volumen", "Número", "Especial", "Periodo", "Año (de publicación)", "Edición", "Ejemplar (largo)", "Ejemplar (medio)", "Ejemplar (corto)", "Fecha"
-    `
+	SELECT 
+		CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', EXTRACT(YEAR FROM j.publication_date)) AS "ID",
+		j.status AS "Estado",
+		j.age AS "Año (de antigüedad)",
+		j.volume_number AS "Volumen",
+		j.number AS "Número",
+		COALESCE(NULLIF(j.special_number, 0), 'N/A') AS "Especial",
+		CONCAT(j.start_month_period, '-', j.end_month_period) AS "Periodo",
+		EXTRACT(YEAR FROM j.publication_date) AS "Año (de publicación)",
+		CONCAT(j.edition_number, '.ª ed.') AS "Edición",
+		CONCAT('Año ', j.age, ', volumen ', j.volume_number, ', número ', j.number, ', ', j.start_month_period, '-', j.end_month_period, ' ', EXTRACT(YEAR FROM j.publication_date)) AS "Ejemplar (largo)",
+		CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number, ', ', j.start_month_period, '-', j.end_month_period) AS "Ejemplar (medio)",
+		CONCAT('Año ', j.age, ', vol.', j.volume_number, ', núm. ', j.number) AS "Ejemplar (corto)",
+		STRING_AGG(art.title, ', ') AS "Lista de artículos",
+		j.publication_date AS "Fecha"
+	FROM 
+		"Journals" j
+	JOIN 
+		"TransitiveArticleJournals" taj ON j.journal_id = taj.journal_id
+	JOIN 
+		"Articles" art ON taj.article_id = art.article_id
+	GROUP BY 
+		"ID", "Estado", "Año (de antigüedad)", "Volumen", "Número", "Especial", "Periodo", "Año (de publicación)", "Edición", "Ejemplar (largo)", "Ejemplar (medio)", "Ejemplar (corto)", "Fecha"
+`
 
-	rows, err := db.DB.Query(query)
+	rows, err := db.Query(query)
 	if err != nil {
 		log.Printf("Error al ejecutar la consulta: %v\n", err)
-		http.Error(w, "Error al obtener los ejemplares", http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -487,8 +487,7 @@ func GetJournalsWithArticles(w http.ResponseWriter, r *http.Request) {
 			&edicion, &ejemplarLargo, &ejemplarMedio, &ejemplarCorto, &listaArticulos, &fecha,
 		); err != nil {
 			log.Printf("Error al escanear los ejemplares: %v\n", err)
-			http.Error(w, "Error al escanear los ejemplares", http.StatusInternalServerError)
-			return
+			return nil, err
 		}
 
 		journals = append(journals, map[string]interface{}{
@@ -508,7 +507,26 @@ func GetJournalsWithArticles(w http.ResponseWriter, r *http.Request) {
 			"Fecha":                fecha.Time,
 		})
 	}
+	return journals, nil
 
+}
+
+func GetJournalsWithArticles(w http.ResponseWriter, r *http.Request) {
+	journals, err := FetchJoinedArticleInfo(db.DB)
+	if err != nil {
+		http.Error(w, "Error al obtener la información de la base de datos", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(journals)
+}
+
+func RenderJournalsTable(w http.ResponseWriter, r *http.Request) {
+	students, err := FetchJoinedArticleInfo(db.DB)
+
+	if err != nil {
+		http.Error(w, "Error al obtener la información de la base de datos", http.StatusInternalServerError)
+		return
+	}
+	components.ArticlesTable(students).Render(r.Context(), w)
 }

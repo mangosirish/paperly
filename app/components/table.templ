@@ -1,41 +1,175 @@
 package components
 
-templ Table(requested_table string) {
+import (
+	"fmt"
+	"time"
+)
+
+templ AuthorsTable(authors []map[string]interface{}) {
 	<div class="table-container">
-		<h2>{ requested_table }</h2>
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Full Name</th>
-					<th>Article</th>
-					<th>Started Date</th>
-					<th>Department</th>
-					<th>Status</th>
+					<th>Nombre</th>
+					<th>Carrera</th>
+					<th>Institución</th>
+					<th>Facultad</th>
+					<th>Correo Electrónico</th>
+					<th>Artículos</th>
+					<th>Área de Concentración</th>
+					<th>Anotaciones</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>Diego Montoya</td>
-					<td>I don't know</td>
-					<td>9/24/2020</td>
-					<td>CBI</td>
-					<td><span class="status in-progress">In progress</span></td>
-				</tr>
-				<tr>
-					<td>Diego Flores</td>
-					<td>The same</td>
-					<td>10/8/2020</td>
-					<td>CBI</td>
-					<td><span class="status not-started">Not started</span></td>
-				</tr>
-				<tr>
-					<td>Diego Baez</td>
-					<td>Other</td>
-					<td>7/15/2020</td>
-					<td>CSH</td>
-					<td><span class="status published">Finished</span></td>
-				</tr>
+				for _, author := range authors {
+					<tr>
+						<td>{ author["Nombre"].(string) }</td>
+						<td>{ author["Carrera"].(string) }</td>
+						<td>{ author["Institución"].(string) }</td>
+						<td>{ author["Facultad"].(string) }</td>
+						<td>{ author["Correo electrónico"].(string) }</td>
+						<td>{ author["Lista de artículos"].(string) }</td>
+						<td>{ author["Área de concentración"].(string) }</td>
+						<td>{ author["Anotaciones"].(string) }</td>
+					</tr>
+				}
 			</tbody>
 		</table>
 	</div>
+}
+
+templ ArticlesTable(articles []map[string]interface{}) {
+	<div class="table-container">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Antigüedad</th>
+					<th>Artículo Original</th>
+					<th>Autor</th>
+					<th>Ejemplar</th>
+					<th>Estado</th>
+					<th>Fecha de Recepción</th>
+					<th>Tipo</th>
+					<th>Anotaciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, article := range articles {
+					<tr>
+						<td>{ article["Nombre"].(string) }</td>
+						<td>{ safeToString(article["Antigüedad"].(int)) }</td>
+						<td>{ article["Artículo original"].(string) }</td>
+						<td>{ article["Autor"].(string) }</td>
+						<td>
+							{ article["Ejemplar"].(string) }
+						</td>
+						<td>{ article["Estado"].(string) }</td>
+						<td>{ safeToString(article["Fecha de recepción"].(time.Time)) }</td>
+						<td>{ article["Tipo"].(string) }</td>
+						<td>{ article["Anotaciones"].(string) }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ StudentSocialServicesTable(students []map[string]interface{}) {
+	<div class="table-container">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Apellido(s)</th>
+					<th>Carrera</th>
+					<th>División</th>
+					<th>Documentación</th>
+					<th>Estado</th>
+					<th>Fecha de Inicio</th>
+					<th>Fecha de Término</th>
+					<th>Matrícula</th>
+					<th>Notas</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, student := range students {
+					<tr>
+						<td>{ student["Nombre"].(string) }</td>
+						<td>{ student["Apellido(s)"].(string) }</td>
+						<td>{ student["Carrera"].(string) }</td>
+						<td>{ student["División"].(string) }</td>
+						<td>
+							<ul>
+								for _, doc := range student["Documentación"].([]bool) {
+									<li>{ safeToString(doc) }</li>
+								}
+							</ul>
+						</td>
+						<td>{ student["Estado"].(string) }</td>
+						<td>{ safeToString(student["Fecha de inicio"].(time.Time)) }</td>
+						<td>{ safeToString(student["Fecha de término"].(time.Time)) }</td>
+						<td>{ student["Matrícula"].(string) }</td>
+						<td>{ student["Notas"].(string) }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ JournalsTable(journals []map[string]interface{}) {
+	<div class="table-container">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Antigüedad</th>
+					<th>Artículo Original</th>
+					<th>Autor</th>
+					<th>Ejemplar</th>
+					<th>Estado</th>
+					<th>Fecha de Recepción</th>
+					<th>Tipo</th>
+					<th>Anotaciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, journal := range journals {
+					<tr>
+						<td>{ journal["Nombre"].(string) }</td>
+						<td>{ safeToString(journal["Antigüedad"].(int)) }</td>
+						<td>{ journal["Artículo original"].(string) }</td>
+						<td>{ journal["Autor"].(string) }</td>
+						<td>{ journal["Ejemplar"].(string) } </td>
+						<td>{ journal["Estado"].(string) }</td>
+						<td>{ safeToString(journal["Fecha de recepción"].(time.Time)) }</td>
+						<td>{ journal["Tipo"].(string) }</td>
+						<td>{ journal["Anotaciones"].(string) }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+func safeToString(value interface{}) string {
+	switch v := value.(type) {
+	case string:
+		return v
+	case int:
+		return fmt.Sprintf("%d", v)
+	case float64:
+		return fmt.Sprintf("%.2f", v)
+	case time.Time:
+		return v.Format("2006-01-02")
+	case bool:
+		if v {
+			return "True"
+		} else {
+			return "False"
+		}
+	default:
+		return fmt.Sprintf("%v", v) // Para otros tipos, simplemente convierte a string
+	}
 }

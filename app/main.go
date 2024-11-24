@@ -34,7 +34,19 @@ func main() {
 	router.HandleFunc("/web/table/{table}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		table := vars["table"]
-		components.Table(table).Render(r.Context(), w)
+		switch table {
+		case "authors":
+			handlers.RenderAuthorsTable(w, r)
+		case "articles":
+			handlers.RenderArticlesTable(w, r)
+		case "social-service":
+			handlers.RenderStudentSocialServicesTable(w, r)
+		case "journals":
+			handlers.RenderJournalsTable(w, r)
+		default:
+			fmt.Print("Error: '" + table + "' table was not found")
+			// TODO: Insert default case for tables
+		}
 	}).Methods("GET")
 
 	router.HandleFunc("/web/form/{form}", func(w http.ResponseWriter, r *http.Request) {
@@ -121,32 +133,6 @@ func main() {
 	router.HandleFunc("/specialties", handlers.GetSpecialties).Methods("GET")
 	router.HandleFunc("/specialties/name/{name}", handlers.GetSpecialtiesByName).Methods("GET")
 
-	router.HandleFunc("/create_author", handleForm("Author")).Methods("POST")
-	router.HandleFunc("/create_journal", handleForm("Journal")).Methods("POST")
-	router.HandleFunc("/create_social_service", handleForm("Social Service")).Methods("POST")
-	router.HandleFunc("/create_article", handleForm("Article")).Methods("POST")
-
 	fmt.Println("Servidor en ejecución en http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
-}
-
-func handleForm(formType string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Parsear el formulario
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "Error al analizar el formulario", http.StatusBadRequest)
-			return
-		}
-
-		// Mostrar cada campo del formulario y sus valores
-		fmt.Printf("Formulario %s:\n", formType)
-		for key, values := range r.Form { // r.PostForm para datos solo de POST
-			fmt.Printf("  Campo: %s, Valores: %v\n", key, values)
-		}
-
-		// Opcional: responder al cliente
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Formulario %s recibido con éxito.", formType)
-	}
 }

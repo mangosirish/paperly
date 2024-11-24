@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/lib/pq"
+	"github.com/mangosirish/paperly/components"
 	"github.com/mangosirish/paperly/db"
 	"github.com/mangosirish/paperly/models"
 )
@@ -620,7 +621,7 @@ func GetStudentSocialServicesByIsCompletionLetterSubmitted(w http.ResponseWriter
 	json.NewEncoder(w).Encode(services)
 }
 
-func GetStudentSocialServiceDetails(w http.ResponseWriter, r *http.Request) {
+func FetchJoinedStudentSocialServiceInfo(db *sql.DB) ([]map[string]interface{}, error) {
 	query := `
         SELECT 
             CONCAT(pe.first_surname, ' ', pe.second_surname, ', ', pe.first_name) AS "Nombre",
@@ -644,24 +645,23 @@ func GetStudentSocialServiceDetails(w http.ResponseWriter, r *http.Request) {
                 sss.is_final_report_submitted,
                 sss.is_completion_letter_submitted
             ] AS "Documentación"
-        FROM 
-            StudentSocialServices sss
+		FROM 
+			"StudentSocialServices" sss
         JOIN 
-            People pe ON sss.person_id = pe.person_id
+            "People" pe ON sss.person_id = pe.person_id
         JOIN 
-            Authors a ON pe.person_id = a.person_id
+            "Authors" a ON pe.person_id = a.person_id
         JOIN 
-            TransitiveAuthorAcademicProfiles taap ON a.author_id = taap.author_id
+            "TransitiveAuthorAcademicProfiles" taap ON a.author_id = taap.author_id
         JOIN 
-            AcademicProfiles ap ON taap.academic_profile_id = ap.academic_profile_id
+            "AcademicProfiles" ap ON taap.academic_profile_id = ap.academic_profile_id
         JOIN 
-            AcademicCareers ac ON ap.career_id = ac.career_id`
+            "AcademicCareers" ac ON ap.career_id = ac.career_id`
 
-	rows, err := db.DB.Query(query)
+	rows, err := db.Query(query)
 	if err != nil {
 		log.Printf("Error al ejecutar la consulta: %v\n", err)
-		http.Error(w, "Error al obtener los detalles del servicio social", http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -673,8 +673,7 @@ func GetStudentSocialServiceDetails(w http.ResponseWriter, r *http.Request) {
 
 		if err := rows.Scan(&nombre, &apellidos, &nombres, &matricula, &division, &carrera, &fechaInicio, &fechaTermino, &estado, &notas, pq.Array(&documentacion)); err != nil {
 			log.Printf("Error al escanear los detalles del servicio social: %v\n", err)
-			http.Error(w, "Error al escanear los detalles del servicio social", http.StatusInternalServerError)
-			return
+			return nil, err
 		}
 
 		studentSocialServices = append(studentSocialServices, map[string]interface{}{
@@ -691,7 +690,26 @@ func GetStudentSocialServiceDetails(w http.ResponseWriter, r *http.Request) {
 			"Documentación":    documentacion,
 		})
 	}
+	return studentSocialServices, nil
+}
 
+func GetStudentSocialServiceDetails(w http.ResponseWriter, r *http.Request) {
+	studentSocialServices, err := FetchJoinedStudentSocialServiceInfo(db.DB)
+	if err != nil {
+		http.Error(w, "Error al obtener la información de la base de datos", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(studentSocialServices)
+}
+
+func RenderStudentSocialServicesTable(w http.ResponseWriter, r *http.Request) {
+	students, err := FetchJoinedStudentSocialServiceInfo(db.DB)
+
+	if err != nil {
+		http.Error(w, "Error al traer la información de la base de datos", http.StatusInternalServerError)
+		return
+	}
+	components.StudentSocialServicesTable(students).Render(r.Context(), w)
+
 }
