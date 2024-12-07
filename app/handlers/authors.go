@@ -232,3 +232,91 @@ func RenderAuthorsTable(w http.ResponseWriter, r *http.Request) {
 	// Renderizar la vista usando templ
 	components.AuthorsTable(authors).Render(r.Context(), w)
 }
+
+// Crear un nuevo registro de Author
+func CreateAuthor(w http.ResponseWriter, r *http.Request) {
+	var author models.Author
+
+	// Decodificar el cuerpo de la solicitud en el modelo Author
+	err := json.NewDecoder(r.Body).Decode(&author)
+	if err != nil {
+		http.Error(w, "Error al leer los datos", http.StatusBadRequest)
+		return
+	}
+
+	// Ejecutar la consulta para insertar el nuevo registro
+	query := `INSERT INTO "Authors" (notes, person_id)
+			  VALUES ($1, $2) RETURNING author_id`
+	err = db.DB.QueryRow(query, author.Notes, author.PersonID).Scan(&author.AuthorID)
+	if err != nil {
+		http.Error(w, "Error al crear el autor", http.StatusInternalServerError)
+		return
+	}
+
+	// Responder con el nuevo registro creado
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(author)
+}
+
+// Actualizar un registro de Author
+func UpdateAuthor(w http.ResponseWriter, r *http.Request) {
+	var author models.Author
+
+	// Decodificar el cuerpo de la solicitud en el modelo Author
+	err := json.NewDecoder(r.Body).Decode(&author)
+	if err != nil {
+		http.Error(w, "Error al leer los datos", http.StatusBadRequest)
+		return
+	}
+
+	// Verificar que el AuthorID esté presente
+	if author.AuthorID == 0 {
+		http.Error(w, "Se requiere un AuthorID para la actualización", http.StatusBadRequest)
+		return
+	}
+
+	// Ejecutar la consulta para actualizar el registro
+	query := `UPDATE "Authors" 
+			  SET notes = $1, person_id = $2
+			  WHERE author_id = $3`
+	result, err := db.DB.Exec(query, author.Notes, author.PersonID, author.AuthorID)
+	if err != nil {
+		http.Error(w, "Error al actualizar el autor", http.StatusInternalServerError)
+		return
+	}
+
+	// Verificar si se actualizó algún registro
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		http.Error(w, "No se encontró el autor con el ID proporcionado", http.StatusNotFound)
+		return
+	}
+
+	// Responder con el registro actualizado
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(author)
+}
+
+// Eliminar un registro de Author
+func DeleteAuthor(w http.ResponseWriter, r *http.Request) {
+	// Obtener el AuthorID de los parámetros de la ruta
+	vars := mux.Vars(r)
+	authorID := vars["author_id"]
+
+	// Ejecutar la consulta para eliminar el registro
+	query := `DELETE FROM "Authors" WHERE author_id = $1`
+	result, err := db.DB.Exec(query, authorID)
+	if err != nil {
+		http.Error(w, "Error al eliminar el autor", http.StatusInternalServerError)
+		return
+	}
+
+	// Verificar si se eliminó algún registro
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		http.Error(w, "No se encontró el autor con el ID proporcionado", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent) // Responder con código 204 No Content
+}

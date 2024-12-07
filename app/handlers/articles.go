@@ -247,3 +247,91 @@ func RenderArticlesTable(w http.ResponseWriter, r *http.Request) {
 
 	components.ArticlesTable(articles).Render(r.Context(), w)
 }
+
+// Crear un nuevo registro de Article
+func CreateArticle(w http.ResponseWriter, r *http.Request) {
+	var article models.Article
+
+	// Decodificar el cuerpo de la solicitud en el modelo Article
+	err := json.NewDecoder(r.Body).Decode(&article)
+	if err != nil {
+		http.Error(w, "Error al leer los datos", http.StatusBadRequest)
+		return
+	}
+
+	// Ejecutar la consulta para insertar el nuevo registro
+	query := `INSERT INTO "Articles" (title, type, reception_date, status)
+			  VALUES ($1, $2, $3, $4) RETURNING article_id`
+	err = db.DB.QueryRow(query, article.Title, article.Type, article.ReceptionDate, article.Status).Scan(&article.ArticleID)
+	if err != nil {
+		http.Error(w, "Error al crear el artículo", http.StatusInternalServerError)
+		return
+	}
+
+	// Responder con el nuevo registro creado
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(article)
+}
+
+// Actualizar un registro de Article
+func UpdateArticle(w http.ResponseWriter, r *http.Request) {
+	var article models.Article
+
+	// Decodificar el cuerpo de la solicitud en el modelo Article
+	err := json.NewDecoder(r.Body).Decode(&article)
+	if err != nil {
+		http.Error(w, "Error al leer los datos", http.StatusBadRequest)
+		return
+	}
+
+	// Verificar que el ArticleID esté presente
+	if article.ArticleID == 0 {
+		http.Error(w, "Se requiere un ArticleID para la actualización", http.StatusBadRequest)
+		return
+	}
+
+	// Ejecutar la consulta para actualizar el registro
+	query := `UPDATE "Articles" 
+			  SET title = $1, type = $2, reception_date = $3, status = $4
+			  WHERE article_id = $5`
+	result, err := db.DB.Exec(query, article.Title, article.Type, article.ReceptionDate, article.Status, article.ArticleID)
+	if err != nil {
+		http.Error(w, "Error al actualizar el artículo", http.StatusInternalServerError)
+		return
+	}
+
+	// Verificar si se actualizó algún registro
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		http.Error(w, "No se encontró el artículo con el ID proporcionado", http.StatusNotFound)
+		return
+	}
+
+	// Responder con el registro actualizado
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(article)
+}
+
+// Eliminar un registro de Article
+func DeleteArticle(w http.ResponseWriter, r *http.Request) {
+	// Obtener el ArticleID de los parámetros de la ruta
+	vars := mux.Vars(r)
+	articleID := vars["article_id"]
+
+	// Ejecutar la consulta para eliminar el registro
+	query := `DELETE FROM "Articles" WHERE article_id = $1`
+	result, err := db.DB.Exec(query, articleID)
+	if err != nil {
+		http.Error(w, "Error al eliminar el artículo", http.StatusInternalServerError)
+		return
+	}
+
+	// Verificar si se eliminó algún registro
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		http.Error(w, "No se encontró el artículo con el ID proporcionado", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent) // Responder con código 204 No Content
+}

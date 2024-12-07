@@ -530,3 +530,92 @@ func RenderJournalsTable(w http.ResponseWriter, r *http.Request) {
 	}
 	components.ArticlesTable(students).Render(r.Context(), w)
 }
+
+// Crear un nuevo registro de Journal
+func CreateJournal(w http.ResponseWriter, r *http.Request) {
+	var journal models.Journal
+
+	// Decodificar el cuerpo de la solicitud en el modelo Journal
+	err := json.NewDecoder(r.Body).Decode(&journal)
+	if err != nil {
+		http.Error(w, "Error al leer los datos", http.StatusBadRequest)
+		return
+	}
+
+	// Ejecutar la consulta para insertar el nuevo registro
+	query := `INSERT INTO "Journals" (status, age, publication_date, start_month_period, end_month_period, number, volume_number, edition_number, special_number, online_link, reserve_number)
+			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING journal_id`
+	err = db.DB.QueryRow(query, journal.Status, journal.Age, journal.PublicationDate, journal.StartMonthPeriod, journal.EndMonthPeriod, journal.Number, journal.VolumeNumber, journal.EditionNumber, journal.SpecialNumber, journal.OnlineLink, journal.ReserveNumber).Scan(&journal.JournalID)
+	if err != nil {
+		http.Error(w, "Error al crear el journal", http.StatusInternalServerError)
+		return
+	}
+
+	// Responder con el nuevo registro creado
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(journal)
+}
+
+// Actualizar un registro de Journal
+func UpdateJournal(w http.ResponseWriter, r *http.Request) {
+	var journal models.Journal
+
+	// Decodificar el cuerpo de la solicitud en el modelo Journal
+	err := json.NewDecoder(r.Body).Decode(&journal)
+	if err != nil {
+		http.Error(w, "Error al leer los datos", http.StatusBadRequest)
+		return
+	}
+
+	// Verificar que el JournalID esté presente
+	if journal.JournalID == 0 {
+		http.Error(w, "Se requiere un JournalID para la actualización", http.StatusBadRequest)
+		return
+	}
+
+	// Ejecutar la consulta para actualizar el registro
+	query := `UPDATE "Journals" 
+			  SET status = $1, age = $2, publication_date = $3, start_month_period = $4, end_month_period = $5,
+				  number = $6, volume_number = $7, edition_number = $8, special_number = $9, online_link = $10, reserve_number = $11
+			  WHERE journal_id = $12`
+	result, err := db.DB.Exec(query, journal.Status, journal.Age, journal.PublicationDate, journal.StartMonthPeriod, journal.EndMonthPeriod, journal.Number, journal.VolumeNumber, journal.EditionNumber, journal.SpecialNumber, journal.OnlineLink, journal.ReserveNumber, journal.JournalID)
+	if err != nil {
+		http.Error(w, "Error al actualizar el journal", http.StatusInternalServerError)
+		return
+	}
+
+	// Verificar si se actualizó algún registro
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		http.Error(w, "No se encontró el journal con el ID proporcionado", http.StatusNotFound)
+		return
+	}
+
+	// Responder con el registro actualizado
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(journal)
+}
+
+// Eliminar un registro de Journal
+func DeleteJournal(w http.ResponseWriter, r *http.Request) {
+	// Obtener el JournalID de los parámetros de la ruta
+	vars := mux.Vars(r)
+	journalID := vars["journal_id"]
+
+	// Ejecutar la consulta para eliminar el registro
+	query := `DELETE FROM "Journals" WHERE journal_id = $1`
+	result, err := db.DB.Exec(query, journalID)
+	if err != nil {
+		http.Error(w, "Error al eliminar el journal", http.StatusInternalServerError)
+		return
+	}
+
+	// Verificar si se eliminó algún registro
+	rowsAffected, err := result.RowsAffected()
+	if err != nil || rowsAffected == 0 {
+		http.Error(w, "No se encontró el journal con el ID proporcionado", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent) // Responder con código 204 No Content
+}
